@@ -3,7 +3,7 @@ import application as app
 from src import bucket, package
 
 def main():
-	parser = argparse.ArgumentParser(description=f"NVGTPM version {app.version}: A Package Manager for NVGT Modules known as include scripts")
+	parser = argparse.ArgumentParser(allow_abbrev=False, description=f"NVGTPM version {app.version}: A Package Manager for NVGT Modules known as include scripts")
 	subparsers = parser.add_subparsers(dest="command")
 	# Command Layout: bucket [add | rm | list]
 	bucket_parser = subparsers.add_parser("bucket", help="Manage buckets where you get modules from", description="Manage buckets")
@@ -39,6 +39,7 @@ def main():
 	
 	update_parser = subparsers.add_parser("update", description="Synchronize modules and buckets", help="Update modules and buckets")
 	update_parser.add_argument("-bks", "--buckets", action="store_true", help="Download latest manifests from remote buckets")
+	update_parser.add_argument("-f", "--force", action="store_true", help="Force the update")
 	update_parser.add_argument("packages", nargs="*", help="Explicit selection labels, or '*' wildcard characters to upgrade all packages")
 	update_parser.set_defaults(func=package.handle_update_command)
 	

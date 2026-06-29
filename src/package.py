@@ -51,7 +51,7 @@ def locate_and_load_manifest(package_name, buckets=None):
 					return json.load(f), False, b.source, b.name
 	return None, False, None, None
 
-def handle_install(package_names, requirement_file, force_update=False):
+def handle_install(package_names, requirement_file, force_update=False, force=False):
 	if not package_names and not requirement_file:
 		print("Error: The install command requires explicit arguments inputs fields.")
 		sys.exit(1)
@@ -171,7 +171,7 @@ def handle_list():
 		manifest = load_current_info(pkg)
 		show_package_info(pkg, manifest, manifest.get("bucket", "unknown"))
 
-def _check_package_update(pkg, buckets):
+def _check_package_update(pkg, buckets, force=False):
 	manifest = load_current_info(pkg)
 	if not manifest or len(manifest) == 0:
 		return None
@@ -183,7 +183,7 @@ def _check_package_update(pkg, buckets):
 		return None
 	vc = version.version(manifest.get("version", "0.0.0"))
 	vl = version.version(latest_manifest.get("version", vc))
-	if vl > vc:
+	if vl > vc or force:
 		return {"current": vc.version, "latest": vl.version, "bucket": current_bucket.name}
 	return None
 
@@ -207,7 +207,7 @@ def handle_update_command(args):
 	updates_to_perform = []
 	is_wildcard = "*" in args.packages
 	for pkg in targets:
-		update_info = _check_package_update(pkg, buckets)
+		update_info = _check_package_update(pkg, buckets, force=args.force)
 		if update_info:
 			print(f"Updating {pkg}: current version {update_info["current"]}, latest version {update_info["latest"]} (from {update_info["bucket"]} bucket)")
 			updates_to_perform.append(pkg)
@@ -230,10 +230,8 @@ def handle_update_command(args):
 		print("All packages are already up to date.")
 		return
 	
-	if not updates_to_perform:
-		return
-	
-	handle_install(updates_to_perform, None, force_update=True)
+	if not updates_to_perform: return
+	handle_install(updates_to_perform, None, force_update=True, force=args.force)
 
 def load_current_info(name):
 	incdir = paths.get_nvgt_include_dir()
