@@ -69,6 +69,20 @@ def get_installed_packages():
 		return []
 	return [d for d in os.listdir(include_dir) if os.path.isdir(os.path.join(include_dir, d))]
 
+def load_manifest_from(path, package_name):
+	if not os.path.exists(path): return None
+	try:
+		with open(path, "r") as f:
+			data = json.load(f)
+			pkg = package()
+			temp_manifest = data
+			temp_manifest["name"] = package_name
+			pkg.load(temp_manifest)
+			return pkg
+	except:
+		pass
+	return None
+
 def locate_and_load_manifest(package_name, buckets=None):
 	buckets = buckets or bucket.load_buckets()
 	bucket_name = None
@@ -83,17 +97,10 @@ def locate_and_load_manifest(package_name, buckets=None):
 		p = b.make_path(pkg_name)
 		if not os.path.exists(p):
 			return None, None
-		try:
-			with open(p, "r") as f:
-				data = json.load(f)
-				pkg = package()
-				temp_manifest = data
-				temp_manifest["name"] = pkg_name
-				pkg.load(temp_manifest)
-				pkg.bucket = b.name
-				return pkg, b
-		except:
-			pass
+		pkg = load_manifest_from(p, pkg_name)
+		if pkg:
+			pkg.bucket = b.name
+			return pkg, b
 		return None, None
 	for b in buckets:
 		if b.name == bucket_name:
@@ -101,20 +108,37 @@ def locate_and_load_manifest(package_name, buckets=None):
 		p = b.make_path(package_name)
 		if not os.path.exists(p):
 			continue
-		try:
-			with open(p, "r") as f:
-				data = json.load(f)
-				pkg = package()
-				temp_manifest = data
-				temp_manifest["name"] = package_name
-				pkg.load(temp_manifest)
-				pkg.bucket = b.name
-				return pkg, b
-		except:
-			pass
+		pkg = load_manifest_from(p, package_name)
+		if pkg:
+			pkg.bucket = b.name
+			return pkg, b
 	return None, None
 
-def handle_install(package_names, requirement_file, force_update=False, force=False):
+def load_current_info(name):
+	incdir = paths.get_nvgt_include_dir()
+	if not os.path.exists(incdir): return None
+	p = os.path.join(incdir, name, "info.json")
+	if not os.path.exists(p): return None
+	return load_manifest_from(p, name)
+
+def show_package_info(name, pkg, bucket_name):
+	if name == "" or not pkg: return
+	print(f"| {name} | {pkg.version or 'unknown'} | {bucket_name} |")
+
+def handle_cleanup():
+	c = 0
+	files = os.listdir(paths.cache_dir)
+	if len(files) == 0:
+		print("No cache to clean")
+		return
+	for x in files:
+		fn = os.path.join(paths.cache_dir, x)
+		if not os.path.exists(fn): continue
+		os.remove(fn)
+		c += 1
+	print(f"{c} cache {"file" if c == 1 else "files"} removed")
+
+def handle_install_package(package_names, requirement_file, force_update=False, force=False):
 	if not package_names and not requirement_file:
 		print("Error: The install command requires explicit arguments inputs fields.")
 		sys.exit(1)
@@ -212,19 +236,6 @@ def handle_uninstall(package_name):
 	else:
 		print(f"Error: Package {pkg_name} is not currently installed.")
 
-def handle_cleanup():
-	c = 0
-	files = os.listdir(paths.cache_dir)
-	if len(files) == 0:
-		print("No cache to clean")
-		return
-	for x in files:
-		fn = os.path.join(paths.cache_dir, x)
-		if not os.path.exists(fn): continue
-		os.remove(fn)
-		c += 1
-	print(f"{c} cache {"file" if c == 1 else "files"} removed")
-
 def handle_list():
 	packages = get_installed_packages()
 	if not packages:
@@ -297,49 +308,7 @@ def handle_update_command(args):
 		return
 	
 	if not updates_to_perform: return
-	handle_install(updates_to_perform, None, force_update=True, force=args.force)
-
-def load_current_info(name):
-	incdir = paths.get_nvgt_include_dir()
-	if not os.path.exists(incdir): return None
-	p = os.path.join(incdir, name, "info.json")
-	if not os.path.exists(p): return None
-	try:
-		with open(p, "r") as f:
-			data = json.load(f)
-			pkg = package()
-			temp_manifest = data
-			temp_manifest["name"] = name
-			pkg.load(temp_manifest)
-			return pkg
-	except:
-		pass
-	return None
-
-def show_package_info(name, pkg, bucket_name):
-	if name == "" or not pkg: return
-	print(f"| {name} | {pkg.version or 'unknown'} | {bucket_name} |")
-
-def search(args):
-	term = args.package.lower()
-	buckets = bucket.load_buckets()
-	bc = None
-	for b in buckets:
-		l = b.list
-		if term in l:
-			bc = b
-			break
-	
-	if not bc:
-		print(f"There is no package matching {term}")
-		sys.exit(1)
-		return
-	manifest = bc.load_manifest(term)
-	if not manifest:
-		print(f"Error. Manifest for {term} cannot be determined")
-		sys.exit(1)
-		return
-	show_package_info(term, manifest, bc.name)
+	handle_install_package(updates_to_perform, None, force_update=True, force=args.force)
 
 def status(args):
 	pkgs = get_installed_packages()
@@ -370,18 +339,34 @@ def status(args):
 	for x in prints:
 		print(x)
 
-def decl(args):
-	if not args.name:
-		print("Error. Name is required")
+def search(args):
+	term = args.package.lower()
+	buckets = bucket.load_buckets()
+	bc = None
+	for b in buckets:
+		l = b.list
+		if term in l:
+			bc = b
+			break
+	
+	if not bc:
+		print(f"There is no package matching {term}")
 		sys.exit(1)
 		return
+	manifest = bc.load_manifest(term)
+	if not manifest:
+		print(f"Error. Manifest for {term} cannot be determined")
+		sys.exit(1)
+		return
+	show_package_info(term, manifest, bc.name)
+
+def decl(args):
 	manifest = load_current_info(args.name)
 	if not manifest:
 		print(f"Error. Package {args.name} does not seem to have installed.")
 		sys.exit(1)
 		return
-	f = f'#include "{manifest.name or args.name}/{manifest.entry or "main"}.nvgt"'
-	print(f)
+	print(f'#include "{manifest.name or args.name}/{manifest.entry or "main"}.nvgt"')
 
 def create_package(args):
 	pkg = package()

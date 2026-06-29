@@ -1,8 +1,7 @@
 import json
 import os
-import shutil
-import sys
-from src import paths, github, package
+from src import paths
+from .import cmd
 
 class bucket:
 	def __init__(self):
@@ -32,12 +31,13 @@ class bucket:
 		return os.path.join(self.dir, "json", f"{package_name}.json")
 	
 	def load_manifest(self, package_name):
+		from src.package import package
 		p = self.make_path(package_name)
 		if not os.path.exists(p): return None
 		try:
 			with open(p, "r") as f:
 				data = json.load(f)
-				pkg = package.package()
+				pkg = package()
 				temp_manifest = data
 				temp_manifest["name"] = package_name
 				pkg.load(temp_manifest)
@@ -86,7 +86,6 @@ def save_buckets(buckets):
 		json.dump({b.name: b.source for b in buckets}, f, indent=2)
 
 def find_bucket_index(buckets, name):
-	# Find the index of a bucket by name in the buckets list.
 	name = name.lower()
 	for i, b in enumerate(buckets):
 		if b.name == name:
@@ -94,7 +93,6 @@ def find_bucket_index(buckets, name):
 	return -1
 
 def find_bucket(buckets, name):
-	# Find a bucket by name in the buckets list.
 	x = find_bucket_index(buckets, name)
 	if x == -1: return None
 	return buckets[x]
@@ -102,63 +100,5 @@ def find_bucket(buckets, name):
 def sync_remote_bucket_manifests(bucket_name, source_url):
 	bucket_dir = os.path.join(paths.buckets_root, bucket_name)
 	print(f"Updating bucket {bucket_name}...")
+	from src import github
 	github.download_and_extract_manifest_zip(source_url, bucket_dir)
-
-def handle_bucket_add(args):
-	buckets = load_buckets()
-	name = args.name.lower()
-	source = args.source
-	if not source or source == "":
-		if name in paths.known_buckets:
-			source = paths.known_buckets.get(name, "")
-	if not source or source == "":
-		print(f"Error: bucket {name} does not contain a path or a link and is not a known bucket")
-		sys.exit(1)
-		return
-	exist = find_bucket_index(buckets, name)
-	b = bucket()
-	b.load({"name": name, "source": source})
-	if exist > -1:
-		buckets[exist] = b
-	else:
-		buckets.append(b)
-	save_buckets(buckets)
-	if b.is_local:
-		source = os.path.abspath(source)
-		if not os.path.exists(os.path.join(source, "json")):
-			print(f"Warning: Target folder \"{source}\" does not contain a 'json' subdirectory.")
-		print(f"Added local bucket tracking '{name}' -> {source}")
-	else:
-		sync_remote_bucket_manifests(name, source)
-
-def handle_bucket_remove(name):
-	buckets = load_buckets()
-	name = name.lower()
-	idx = find_bucket_index(buckets, name)
-	if idx >= 0:
-		del buckets[idx]
-		save_buckets(buckets)
-		local_bucket_dir = os.path.join(paths.buckets_root, name)
-		if os.path.exists(local_bucket_dir):
-			shutil.rmtree(local_bucket_dir)
-		print(f"Bucket {name} removed successfully.")
-	else:
-		print(f"Error: bucket {name} is not registered.")
-
-def handle_bucket_list():
-	buckets = load_buckets()
-	if not buckets:
-		print("No active buckets registered.")
-		return
-	print("Active buckets:")
-	for b in sorted(buckets, key=lambda x: x.name):
-		print(f"{b.name.ljust(15)} : {b.source}")
-
-def handle_known_bucket_list(args):
-	buckets = paths.known_buckets
-	if not buckets:
-		print("No known buckets.")
-		return
-	print("Known buckets:")
-	for name, source in sorted(buckets.items()):
-		print(f"{name.ljust(15)} : {source}")

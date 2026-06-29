@@ -5,23 +5,12 @@ from src import bucket, package
 def main():
 	parser = argparse.ArgumentParser(allow_abbrev=False, description=f"NVGTPM version {app.version}: A Package Manager for NVGT Modules known as include scripts")
 	subparsers = parser.add_subparsers(dest="command")
-	# Command Layout: bucket [add | rm | list]
-	bucket_parser = subparsers.add_parser("bucket", help="Manage buckets where you get modules from", description="Manage buckets")
-	bucket_sub = bucket_parser.add_subparsers(dest="subcommand")
-	b_add = bucket_sub.add_parser("add", description="add an external workspace path folder or Git repository URL, as a bucket", help="Add a bucket")
-	b_add.add_argument("name", help="Bucket shorthand tracking reference name")
-	b_add.add_argument("source", nargs="?", default="", help="GitHub repo HTTPS URL or local directory file path. Can be optional if the bucket is in the list of known buckets.")
-	b_add.set_defaults(func=bucket.handle_bucket_add)
-	b_rm = bucket_sub.add_parser("rm", description="Remove an active registered bucket and delete its manifest directory cache", help="Remove a bucket")
-	b_rm.add_argument("name", help="Target bucket alias label")
-	b_rm.set_defaults(func=lambda args: bucket.handle_bucket_remove(args.name))
-	bucket_sub.add_parser("list", help="List all buckets", description="List all registered remote and local buckets").set_defaults(func=lambda args: bucket.handle_bucket_list())
-	bucket_sub.add_parser("known", help="List officially known buckets", description="List all known remote buckets").set_defaults(func=bucket.handle_known_bucket_list)
+	bucket.cmd.register(subparsers)
 	
 	install_parser = subparsers.add_parser("install", description="Install targeted script modules, includes", help="Install script modules, includes")
 	install_parser.add_argument("packages", nargs="*", help="Space-separated list of module names to install")
 	install_parser.add_argument("-r", "--requirement", help="Install bulk package listings tracked from a plain text file")
-	install_parser.set_defaults(func=lambda args: package.handle_install(args.packages, args.requirement))
+	install_parser.set_defaults(func=lambda args: package.handle_install_package(args.packages, args.requirement))
 	
 	uninstall_parser = subparsers.add_parser("uninstall", description="Purge an installed package directory completely", help="Uninstall a module")
 	uninstall_parser.add_argument("package", help="Name string of the module to uninstall")
