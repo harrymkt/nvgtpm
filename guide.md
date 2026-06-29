@@ -28,7 +28,7 @@ Each package manifest is a JSON file named `<package_name>.json` inside the `jso
 
 | Key | Type | Description | Required |
 | --- | --- | --- | --- |
-| `version` | String | Release version, i.e. `"1.2.0"`. Used to detect updates. You can also use as build number if you wish, i.e. `"yyyy.mm.dd"`, `"1970-01-15"`. | Yes |
+| `version` | String | Release version, i.e. `"1.2.0"`. Used to detect updates. You can also use as build number if you wish, i.e. `"yyyy.mm.dd"`, `"1970.01.15"`. | Yes |
 | `description` | String | Brief summary of the package. | No |
 | `url` | String | Remote HTTPS zip URL, local zip path, or relative directory path. | Yes |
 | `extract_dir` | String | Folder name inside `nvgt/include/`. Defaults to package name if omitted. | No |
