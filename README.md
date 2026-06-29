@@ -3,17 +3,12 @@ A command-line package manager for [NVGT](https://nvgt.dev) include scripts. NVG
 
 NVGTPM tracks installed packages, resolves dependencies from bucket manifests, and syncs updates directly into NVGT's `include/` directory.
 
-[Package and Bucket Creation Developer Guide](guide.md)
-
-## Help
-```bash
-nvgtpm --help
-```
-
-Note: if you are running NVGTPM from source, use `python nvgtpm.py <command>`
+[Bucket Creation Developer Guide](bucket-guide.md)
 
 ## Usage
 Use `nvgtpm --help`, or `nvgtpm -h`, to view a list of commands which may contain commands that are not yet documented here.
+
+Note: if you are running NVGTPM from source, use `python nvgtpm.py <command>`
 
 ### Managing Buckets
 Buckets are sources of packages. A bucket can be a local directory or a remote GitHub repository that exposes a `json/` folder containing package manifests.
@@ -131,3 +126,28 @@ Remove all cached zip files downloaded during package installations.
 ```bash
 nvgtpm cleanup
 ```
+
+## Creating a Package
+### Introduction
+Creating a package is easy. Create a git repository, or anywhere you can host your package zip file, then contribute your `package_name.json` to one of the buckets, such as main.
+
+### Zip and upload your package to your host
+Each package zip must contain an entry point named **main.nvgt** so it can be used with `#include "<name>/main.nvgt"`. If you use a different entry point name, document it in the package. However, using different name other than **main.nvgt** is generally not recommended.
+
+A package can contain multiple scripts and subdirectories.
+
+### Create Manifest Schema (`package.json`)
+Each package manifest is a JSON file named `<package_name>.json`. Note: you can also use `nvgtpm create` to create a package, which will bring up an interactive input fields.
+
+| Key | Type | Description | Required |
+| --- | --- | --- | --- |
+| `version` | String | Release version, i.e. `"1.2.0"`. Used to detect updates. You can also use as build number if you wish, i.e. `"yyyy.mm.dd"`, `"1970.01.15"`. | Yes |
+| `description` | String | Brief summary of the package. | No |
+| `url` | String | Remote HTTPS zip URL, local zip path, or relative directory path. | Yes |
+| `extract_dir` | String | Folder name inside `nvgt/include/`. Defaults to package name if omitted. | No |
+
+### Final Step
+- Add the created manifest JSON file to one of the buckets, usually on GitHub, into their json directory.
+- Commit your changes to the bucket repository, and make a pull request.
+
+That's it!
