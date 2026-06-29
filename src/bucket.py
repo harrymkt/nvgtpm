@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 import sys
-from src import paths, github
+from src import paths, github, package
 
 class bucket:
 	def __init__(self):
@@ -26,20 +26,25 @@ class bucket:
 	def is_local(self):
 		return self.source and not self.source.startswith(("http://", "https://"))
 	
-	def make_path(self, package):
+	def make_path(self, package_name):
 		if not self.is_local:
-			return os.path.join(self.dir, f"{package}.json")
-		return os.path.join(self.dir, "json", f"{package}.json")
+			return os.path.join(self.dir, f"{package_name}.json")
+		return os.path.join(self.dir, "json", f"{package_name}.json")
 	
-	def load_manifest(self, package):
-		p = self.make_path(package)
-		if not os.path.exists(p): return {}
+	def load_manifest(self, package_name):
+		p = self.make_path(package_name)
+		if not os.path.exists(p): return None
 		try:
 			with open(p, "r") as f:
-				return json.load(f)
+				data = json.load(f)
+				pkg = package.package()
+				temp_manifest = data
+				temp_manifest["name"] = package_name
+				pkg.load(temp_manifest)
+				return pkg
 		except:
 			pass
-		return {}
+		return None
 	
 	def load(self, data):
 		if data:

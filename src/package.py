@@ -6,6 +6,63 @@ import urllib.request
 import zipfile
 from src import paths, bucket, version
 
+class package:
+	def __init__(self, data=None):
+		self.name = None
+		self.version = None
+		self.url = None
+		self.entry = None
+		self.extract_dir = None
+		self.bucket = None
+		if data:
+			self.load(data)
+	
+	@property
+	def json(self):
+		d = {}
+		if self.version is not None:
+			d["version"] = self.version
+		if self.url is not None:
+			d["url"] = self.url
+		if self.entry is not None:
+			d["entry"] = self.entry
+		if self.extract_dir is not None:
+			d["extract_dir"] = self.extract_dir
+		if self.bucket is not None:
+			d["bucket"] = self.bucket
+		return d
+	
+	def load(self, data):
+		if data:
+			if "name" in data:
+				self.name = data["name"]
+			if "version" in data:
+				self.version = data["version"]
+			if "url" in data:
+				self.url = data["url"]
+			if "entry" in data:
+				self.entry = data["entry"]
+			if "extract_dir" in data:
+				self.extract_dir = data["extract_dir"]
+			if "bucket" in data:
+				self.bucket = data["bucket"]
+	
+	@property
+	def dir(self):
+		if self.name:
+			return os.path.join(paths.get_nvgt_include_dir(), self.name)
+		return None
+	
+	@property
+	def is_local(self):
+		if self.url:
+			return not self.url.startswith(("http://", "https://"))
+		return None
+	
+	def save(self, path):
+		with open(path, "w", encoding="utf-8") as f:
+			json.dump(self.json, f, indent=2)
+
 def get_installed_packages():
 	include_dir = paths.get_nvgt_include_dir()
 	if not os.path.exists(include_dir):
@@ -20,36 +77,42 @@ def locate_and_load_manifest(package_name, buckets=None):
 		parts = package_name.split("/", 1)
 		bucket_name = parts[0].lower()
 		pkg_name = parts[1]
-		pkg_filename = f"{pkg_name.lower()}.json"
 		b = bucket.find_bucket(buckets, bucket_name)
 		if not b:
-			return None, False, None, bucket_name
-		if b.is_local:
-			potential_path = os.path.join(b.source, "json", pkg_filename)
-			if os.path.exists(potential_path):
-				with open(potential_path, "r") as f:
-					return json.load(f), True, b.source, b.name
-		else:
-			potential_path = os.path.join(b.dir, pkg_filename)
-			if os.path.exists(potential_path):
-				with open(potential_path, "r") as f:
-					return json.load(f), False, b.source, b.name
-		return None, False, None, bucket_name
-	pkg_filename = f"{package_name.lower()}.json"
+			return None, None
+		p = b.make_path(pkg_name)
+		if not os.path.exists(p):
+			return None, None
+		try:
+			with open(p, "r") as f:
+				data = json.load(f)
+				pkg = package()
+				temp_manifest = data
+				temp_manifest["name"] = pkg_name
+				pkg.load(temp_manifest)
+				pkg.bucket = b.name
+				return pkg, b
+		except:
+			pass
+		return None, None
 	for b in buckets:
 		if b.name == bucket_name:
 			continue
-		if b.is_local:
-			potential_path = os.path.join(b.source, "json", pkg_filename)
-			if os.path.exists(potential_path):
-				with open(potential_path, "r") as f:
-					return json.load(f), True, b.source, b.name
-		else:
-			potential_path = os.path.join(b.dir, pkg_filename)
-			if os.path.exists(potential_path):
-				with open(potential_path, "r") as f:
-					return json.load(f), False, b.source, b.name
-	return None, False, None, None
+		p = b.make_path(package_name)
+		if not os.path.exists(p):
+			continue
+		try:
+			with open(p, "r") as f:
+				data = json.load(f)
+				pkg = package()
+				temp_manifest = data
+				temp_manifest["name"] = package_name
+				pkg.load(temp_manifest)
+				pkg.bucket = b.name
+				return pkg, b
+		except:
+			pass
+	return None, None
 
 def handle_install(package_names, requirement_file, force_update=False, force=False):
 	if not package_names and not requirement_file:
@@ -74,26 +137,27 @@ def handle_install(package_names, requirement_file, force_update=False, force=Fa
 			bucket_to_use = parts[0].lower()
 			pkg_name = parts[1]
 		elif force_update:
-			stored_info = load_current_info(pkg)
-			if stored_info:
-				bucket_to_use = stored_info.get("bucket")
+			cinfo = load_current_info(pkg)
+			if cinfo:
+				bucket_to_use = cinfo.bucket
 		if bucket_to_use:
-			manifest, is_local, bucket_source, bucket_name = locate_and_load_manifest(f"{bucket_to_use}/{pkg_name}")
+			manifest, b = locate_and_load_manifest(f"{bucket_to_use}/{pkg_name}")
 		else:
-			manifest, is_local, bucket_source, bucket_name = locate_and_load_manifest(pkg_name)
+			manifest, b = locate_and_load_manifest(pkg_name)
 		if not manifest:
-			if bucket_name:
-				print(f"Error: Package {pkg_name} could not be located in bucket {bucket_name}.")
+			if bucket_to_use:
+				print(f"Error: Package {pkg_name} could not be located in bucket {bucket_to_use}.")
 			else:
 				print(f"Error: Package {pkg_name} could not be located in any active bucket.")
 			continue
-		pkg_version = manifest.get("version", "1.0.0")
-		url_or_path = manifest.get("url")
-		target_path = os.path.join(include_dir, manifest.get("extract_dir", pkg_name))
+		pkg_version = manifest.version or "1.0.0"
+		url_or_path = manifest.url
+		bucket_name = b.name
+		target_path = os.path.join(include_dir, manifest.extract_dir or pkg_name)
 		zip_payload_path = None
 		installed = False
-		if is_local and not url_or_path.startswith(("http://", "https://")):
-			full_local_path = os.path.normpath(os.path.join(bucket_source, url_or_path))
+		if url_or_path and manifest.is_local:
+			full_local_path = os.path.normpath(url_or_path)
 			if os.path.isdir(full_local_path):
 				print(f"Syncing folder copy from local bucket: {full_local_path}")
 				if os.path.exists(target_path):
@@ -121,18 +185,20 @@ def handle_install(package_names, requirement_file, force_update=False, force=Fa
 			try:
 				with zipfile.ZipFile(zip_payload_path, "r") as zip_ref:
 					zip_ref.extractall(target_path)
-				print(f"Successfully installed {pkg_name} {pkg_version}")
 				installed = True
 			except Exception as e:
 				print(f"Extraction failure: {e}")
 				continue
 		if installed:
+			print(f"Successfully installed {pkg_name} {pkg_version}")
 			info_path = os.path.join(target_path, "info.json")
-			manifest["bucket"] = bucket_name
-			manifest["name"] = pkg_name
+			manifest_path = b.make_path(pkg_name)
 			try:
+				with open(manifest_path, "r") as f:
+					manifest_data = json.load(f)
+				manifest_data["bucket"] = bucket_name
 				with open(info_path, "w", encoding="utf-8") as f:
-					json.dump(manifest, f, indent=2)
+					json.dump(manifest_data, f, indent=2)
 			except Exception as e:
 				print(f"Warning: install succeeded but failed to write manifest: {e}")
 
@@ -169,20 +235,20 @@ def handle_list():
 	print("|---|---|---|")
 	for pkg in sorted(packages):
 		manifest = load_current_info(pkg)
-		show_package_info(pkg, manifest, manifest.get("bucket", "unknown"))
+		show_package_info(pkg, manifest, manifest.bucket if manifest else "unknown")
 
 def _check_package_update(pkg, buckets, force=False):
 	manifest = load_current_info(pkg)
-	if not manifest or len(manifest) == 0:
+	if not manifest:
 		return None
-	current_bucket = bucket.find_bucket(buckets, manifest.get("bucket", "main"))
+	current_bucket = bucket.find_bucket(buckets, manifest.bucket or "main")
 	if not current_bucket:
 		return None
 	latest_manifest = current_bucket.load_manifest(pkg)
-	if not latest_manifest or len(latest_manifest) == 0:
+	if not latest_manifest:
 		return None
-	vc = version.version(manifest.get("version", "0.0.0"))
-	vl = version.version(latest_manifest.get("version", vc))
+	vc = version.version(manifest.version or "0.0.0")
+	vl = version.version(latest_manifest.version or "0.0.0")
 	if vl > vc or force:
 		return {"current": vc.version, "latest": vl.version, "bucket": current_bucket.name}
 	return None
@@ -209,7 +275,7 @@ def handle_update_command(args):
 	for pkg in targets:
 		update_info = _check_package_update(pkg, buckets, force=args.force)
 		if update_info:
-			print(f"Updating {pkg}: current version {update_info["current"]}, latest version {update_info["latest"]} (from {update_info["bucket"]} bucket)")
+			print(f"Updating {pkg}: current version {update_info['current']}, latest version {update_info['latest']} (from {update_info['bucket']} bucket)")
 			updates_to_perform.append(pkg)
 		elif is_wildcard:
 			if not load_current_info(pkg):
@@ -235,19 +301,24 @@ def handle_update_command(args):
 
 def load_current_info(name):
 	incdir = paths.get_nvgt_include_dir()
-	if not os.path.exists(incdir): return {}
+	if not os.path.exists(incdir): return None
 	p = os.path.join(incdir, name, "info.json")
-	if not os.path.exists(p): return {}
+	if not os.path.exists(p): return None
 	try:
 		with open(p, "r") as f:
-			return json.load(f)
+			data = json.load(f)
+			pkg = package()
+			temp_manifest = data
+			temp_manifest["name"] = name
+			pkg.load(temp_manifest)
+			return pkg
 	except:
 		pass
-	return {}
+	return None
 
-def show_package_info(name, manifest, bucket_name):
-	if name == "" or len(manifest) == 0: return
-	print(f"| {name} | {manifest.get("version", "unknown")} | {bucket_name} |")
+def show_package_info(name, pkg, bucket_name):
+	if name == "" or not pkg: return
+	print(f"| {name} | {pkg.version or 'unknown'} | {bucket_name} |")
 
 def search(args):
 	term = args.package.lower()
@@ -264,7 +335,7 @@ def search(args):
 		sys.exit(1)
 		return
 	manifest = bc.load_manifest(term)
-	if not manifest or len(manifest) == 0:
+	if not manifest:
 		print(f"Error. Manifest for {term} cannot be determined")
 		sys.exit(1)
 		return
@@ -280,13 +351,13 @@ def status(args):
 	prints = []
 	for x in pkgs:
 		manifest = load_current_info(x)
-		if not manifest or len(manifest) == 0: continue
-		b = bucket.find_bucket(buckets, manifest.get("bucket", "main"))
+		if not manifest: continue
+		b = bucket.find_bucket(buckets, manifest.bucket or "main")
 		if not b: continue
 		linfo = b.load_manifest(x)
-		if not linfo or len(linfo) == 0: continue
-		vc = version.version(manifest.get("version", "0.0.0"))
-		vl = version.version(linfo.get("version", vc))
+		if not linfo: continue
+		vc = version.version(manifest.version or "0.0.0")
+		vl = version.version(linfo.version or "0.0.0")
 		if vl == vc or vl < vc: continue
 		c += 1
 		prints.append(f"New version {vl.version} of {x} from {b.name} bucket")
@@ -305,33 +376,30 @@ def decl(args):
 		sys.exit(1)
 		return
 	manifest = load_current_info(args.name)
-	if not manifest or len(manifest) == 0:
+	if not manifest:
 		print(f"Error. Package {args.name} does not seem to have installed.")
 		sys.exit(1)
 		return
-	f = f"#include \"{manifest.get("name", args.name)}/{manifest.get("entry", "main")}.nvgt\""
+	f = f'#include "{manifest.name or args.name}/{manifest.entry or "main"}.nvgt"'
 	print(f)
 
 def create_package(args):
-	name = input("Package name")
-	if not name:
+	pkg = package()
+	pkg.name = input("Package name")
+	if not pkg.name:
 		print("Error. A package must have a name.")
 		return
-	elif " " in name:
+	elif " " in pkg.name:
 		print("Error. The name must not contain spaces")
 		return
-	url = input("A link to download, or a path on the local file system")
-	if not url:
+	pkg.url = input("A link to download, or a path on the local file system")
+	if not pkg.url:
 		print("Error. A link to download or a path is required.")
 		return
-	version = input("Version")
-	if not version:
+	pkg.version = input("Version")
+	if not pkg.version:
 		print("Error. A package requires its version.")
 		return
-	d = {
-		"url": url,
-		"version": version
-	}
-	with open(f"{name}.json", "w", encoding="utf-8") as f:
-		json.dump(d, f, indent=2)
-	print(f"Successfully created {name}.json")
+	with open(f"{pkg.name}.json", "w", encoding="utf-8") as f:
+		json.dump(pkg.json, f, indent=2)
+	print(f"Successfully created {pkg.name}.json")
