@@ -5,7 +5,7 @@ import sys
 from src import bucket, paths
 
 def add(args):
-	buckets = bucket.load_buckets()
+	buckets = bucket.load()
 	name = args.name.lower()
 	source = args.source
 	if not source or source == "":
@@ -15,14 +15,14 @@ def add(args):
 		print(f"Error: bucket {name} does not contain a path or a link and is not a known bucket")
 		sys.exit(1)
 		return
-	exist = bucket.find_bucket_index(buckets, name)
+	exist = bucket.find_index(buckets, name)
 	b = bucket.bucket()
 	b.load({"name": name, "source": source})
 	if exist > -1:
 		buckets[exist] = b
 	else:
 		buckets.append(b)
-	bucket.save_buckets(buckets)
+	bucket.save(buckets)
 	if b.is_local:
 		source = os.path.abspath(source)
 		if not os.path.exists(os.path.join(source, "json")):
@@ -32,12 +32,12 @@ def add(args):
 		bucket.sync_remote_bucket_manifests(name, source)
 
 def remove(name):
-	buckets = bucket.load_buckets()
+	buckets = bucket.load()
 	name = name.lower()
-	idx = bucket.find_bucket_index(buckets, name)
+	idx = bucket.find_index(buckets, name)
 	if idx >= 0:
 		del buckets[idx]
-		bucket.save_buckets(buckets)
+		bucket.save(buckets)
 		local_bucket_dir = os.path.join(paths.buckets_root, name)
 		if os.path.exists(local_bucket_dir):
 			shutil.rmtree(local_bucket_dir)
@@ -46,7 +46,7 @@ def remove(name):
 		print(f"Error: bucket {name} is not registered.")
 
 def list():
-	buckets = bucket.load_buckets()
+	buckets = bucket.load()
 	if not buckets:
 		print("No active buckets registered.")
 		return
@@ -64,8 +64,8 @@ def known(args):
 		print(f"{name.ljust(15)} : {source}")
 
 def homepage(args):
-	buckets = bucket.load_buckets()
-	b = bucket.find_bucket(buckets, args.name.lower())
+	buckets = bucket.load()
+	b = bucket.find(buckets, args.name.lower())
 	if not b:
 		print(f"Bucket {args.name} not found")
 		return

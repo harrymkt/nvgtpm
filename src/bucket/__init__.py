@@ -62,7 +62,7 @@ class bucket:
 			l.append(ld)
 		return l
 
-def load_buckets():
+def load():
 	paths.init_environment()
 	buckets = []
 	try:
@@ -81,19 +81,19 @@ def load_buckets():
 			buckets.append(b)
 	return buckets
 
-def save_buckets(buckets):
+def save(buckets):
 	with open(paths.buckets_tracking_file, "w") as f:
 		json.dump({b.name: b.source for b in buckets}, f, indent=2)
 
-def find_bucket_index(buckets, name):
+def find_index(buckets, name):
 	name = name.lower()
 	for i, b in enumerate(buckets):
 		if b.name == name:
 			return i
 	return -1
 
-def find_bucket(buckets, name):
-	x = find_bucket_index(buckets, name)
+def find(buckets, name):
+	x = find_index(buckets, name)
 	if x == -1: return None
 	return buckets[x]
 

@@ -138,7 +138,9 @@ Each package zip must contain an entry point named `main.nvgt` or `<package_name
 A package can contain multiple scripts and subdirectories.
 
 ### Create Manifest Schema (`package.json`)
-Each package manifest is a JSON file named `<package_name>.json`. Note: you can also use `nvgtpm create` to create a package, which will bring up an interactive input fields.
+Each package manifest is a JSON file named `<package_name>.json`.
+
+Note: you can also use `nvgtpm create` to create a package, which will bring up an interactive input fields.
 
 | Key | Type | Description | Required |
 | --- | --- | --- | --- |
@@ -148,6 +150,6 @@ Each package manifest is a JSON file named `<package_name>.json`. Note: you can 
 
 ### Final Step
 - Add the created manifest JSON file to one of the buckets, usually on GitHub, into their json directory.
-- Commit your changes to the bucket repository, and make a pull request.
+- Commit your changes to the bucket repository, and make a pull request. Wait for the package to be approved.
 
 That's it!

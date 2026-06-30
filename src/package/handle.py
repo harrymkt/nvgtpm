@@ -129,7 +129,7 @@ def list(args):
 		package.show_package_info(pkg, manifest, manifest.bucket if manifest else "unknown")
 
 def update_command(args):
-	buckets = bucket.load_buckets()
+	buckets = bucket.load()
 	if args.buckets:
 		print("Synchronizing all remote buckets...")
 		for b in buckets:

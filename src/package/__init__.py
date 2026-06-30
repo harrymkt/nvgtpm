@@ -77,14 +77,14 @@ def load_manifest_from(path, package_name):
 	return None
 
 def locate_and_load_manifest(package_name, buckets=None):
-	buckets = buckets or bucket.load_buckets()
+	buckets = buckets or bucket.load()
 	bucket_name = None
 	pkg_name = package_name
 	if "/" in package_name:
 		parts = package_name.split("/", 1)
 		bucket_name = parts[0].lower()
 		pkg_name = parts[1]
-		b = bucket.find_bucket(buckets, bucket_name)
+		b = bucket.find(buckets, bucket_name)
 		if not b:
 			return None, None
 		p = b.make_path(pkg_name)
@@ -122,7 +122,7 @@ def _check_package_update(pkg, buckets, force=False):
 	manifest = load_current_info(pkg)
 	if not manifest:
 		return None
-	current_bucket = bucket.find_bucket(buckets, manifest.bucket or "main")
+	current_bucket = bucket.find(buckets, manifest.bucket or "main")
 	if not current_bucket:
 		return None
 	latest_manifest = current_bucket.load_manifest(pkg)
@@ -139,13 +139,13 @@ def status(args):
 	if len(pkgs) == 0:
 		print("No modules installed")
 		return
-	buckets = bucket.load_buckets()
+	buckets = bucket.load()
 	c = 0
 	prints = []
 	for x in pkgs:
 		manifest = load_current_info(x)
 		if not manifest: continue
-		b = bucket.find_bucket(buckets, manifest.bucket or "main")
+		b = bucket.find(buckets, manifest.bucket or "main")
 		if not b: continue
 		linfo = b.load_manifest(x)
 		if not linfo: continue
@@ -165,11 +165,10 @@ def status(args):
 
 def search(args):
 	term = args.package.lower()
-	buckets = bucket.load_buckets()
+	buckets = bucket.load()
 	bc = None
 	for b in buckets:
-		l = b.list
-		if term in l:
+		if term in b.list:
 			bc = b
 			break
 	
