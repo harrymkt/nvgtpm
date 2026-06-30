@@ -197,7 +197,12 @@ def decl(args):
 		return
 	m = "main"
 	if not os.path.exists(os.path.join(manifest.dir, f"{m}.nvgt")): m = manifest.name or args.name
-	print(f"#include \"{manifest.name or args.name}/{manifest.entry or m}.nvgt\"")
+	msg = f"#include \"{manifest.name or args.name}/{manifest.entry or m}.nvgt\""
+	print(msg)
+	if args.copy:
+		import pyperclip as clip
+		clip.copy(msg)
+	return
 
 def create_package(args):
 	pkg = package()

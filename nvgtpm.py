@@ -24,6 +24,7 @@ def main():
 	
 	decl = subparsers.add_parser("decl", description="Retrieve the syntax to use a specific installed module", help="Retrieve the syntax to utilize a module")
 	decl.add_argument("name", help="The name of the module that is installed")
+	decl.add_argument("-c", "--copy", help="Copy the declaration syntax to clipboard", action="store_true")
 	decl.set_defaults(func=package.decl)
 	
 	update_parser = subparsers.add_parser("update", description="Synchronize modules and buckets", help="Update modules and buckets")

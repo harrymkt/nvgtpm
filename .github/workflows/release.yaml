@@ -29,9 +29,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller
+          pip install -r requirements.txt
       - name: Package Binary Executable via PyInstaller
         run: |
-          pyinstaller --onefile --name nvgtpm --collect-submodules src nvgtpm.py
+          pyinstaller --onefile nvgtpm.py
       - name: Upload Binary Artifact for Release Job
         uses: actions/upload-artifact@v7
         with:

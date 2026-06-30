@@ -17,7 +17,6 @@ By default, [`main` bucket](https://github.com/harrymkt/nvgtpm_bucket_main) is a
 
 #### Adding a bucket
 Register a new bucket so NVGTPM can discover its packages. The source can be a local folder path or a GitHub HTTPS URL.
-
 ```bash
 nvgtpm bucket add <name> <source>
 ```
@@ -26,21 +25,18 @@ If a bucket is present in the known buckets, you can type `nvgtpm bucket add <na
 
 #### Removing a bucket
 Unregister a bucket and delete its locally cached manifest directory.
-
 ```bash
 nvgtpm bucket rm <name>
 ```
 
 #### Listing registered buckets
 Show all active buckets that NVGTPM currently uses to resolve packages.
-
 ```bash
 nvgtpm bucket list
 ```
 
 #### Listing known buckets
 Show the officially known remote buckets available for registration.
-
 ```bash
 nvgtpm bucket known
 ```
@@ -48,15 +44,17 @@ nvgtpm bucket known
 If a bucket is present in the known buckets, you can type `nvgtpm bucket add <name>`, omitting the source.
 
 ### Installing Packages
-#### Installing a package
-Download and install a single package from any active bucket into NVGT's `include/` directory.
-
+#### Installing one or more packages
+Download and install one or more packages from any active bucket into NVGT's `include/` directory.
 ```bash
-nvgtpm install <package>
+nvgtpm install <packages>
 ```
 
-You can also specify a bucket explicitly to install a package from a specific source:
+Thus, if you want to install 3 packages, you would use the following command:
+```bash
+nvgtpm install p1 p2 p3
 
+You can also specify a bucket in each package explicitly to install from specific sources:
 ```bash
 nvgtpm install <bucket>/<package>
 ```
@@ -65,7 +63,6 @@ This is useful when the same package name exists in multiple buckets. The instal
 
 #### Installing packages via a requirements file
 Install multiple packages at once by specifying a plain-text requirements file. Each line should contain one package name. Lines starting with `#` are treated as comments and ignored.
-
 ```bash
 nvgtpm install -r nvgtpmr.txt
 ```
@@ -73,21 +70,18 @@ nvgtpm install -r nvgtpmr.txt
 ### Managing Installed Packages
 #### Listing installed packages
 Show all packages currently installed in NVGT's `include/` directory, along with their versions and source buckets.
-
 ```bash
 nvgtpm list
 ```
 
 #### Uninstalling a package
 Remove an installed package and its directory from NVGT's `include/` folder.
-
 ```bash
 nvgtpm uninstall <package>
 ```
 
 #### Searching for a package
 Look up a package by name across all active buckets.
-
 ```bash
 nvgtpm search <package>
 ```
@@ -100,21 +94,18 @@ nvgtpm status
 
 #### Updating buckets
 Refresh manifests from all remote buckets so package listings and versions are up to date.
-
 ```bash
 nvgtpm update --buckets
 ```
 
 #### Updating a specific package
 Re-download and install a package, overwriting the currently installed version with the latest available from its bucket.
-
 ```bash
 nvgtpm update <package>
 ```
 
 #### Updating all packages
 Update every installed package to its latest version across all buckets.
-
 ```bash
 nvgtpm update *
 ```
@@ -122,16 +113,16 @@ nvgtpm update *
 ### Extra
 ### Getting declaration syntax of a package
 Retrieve the declaration syntax of a package to put in your NVGT script to be included.
-
 ```bash
 nvgtpm decl <name>
 ```
 
 The format returned by this command will be `#include "<package_name>/<f>.nvgt"`, where `<f>` is the format, either `main` or `<package_name>`.
 
+Add `-c` or `--copy` option to copy the declaration syntax to clipboard as well.
+
 ### Clearing cache
 Remove all cached zip files downloaded during package installations.
-
 ```bash
 nvgtpm cleanup
 ```
