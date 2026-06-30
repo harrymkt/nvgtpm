@@ -1,5 +1,5 @@
 import argparse
-from .import handle
+from . import handle
 
 def register(p):
 	bp = p.add_parser("bucket", help="Manage buckets where you get modules from", description="Manage buckets")

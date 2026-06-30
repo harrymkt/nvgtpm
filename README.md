@@ -120,6 +120,15 @@ nvgtpm update *
 ```
 
 ### Extra
+### Getting declaration syntax of a package
+Retrieve the declaration syntax of a package to put in your NVGT script to be included.
+
+```bash
+nvgtpm decl <name>
+```
+
+The format returned by this command will be `#include "<package_name>/<f>.nvgt"`, where `<f>` is the format, either `main` or `<package_name>`.
+
 ### Clearing cache
 Remove all cached zip files downloaded during package installations.
 
@@ -132,7 +141,7 @@ nvgtpm cleanup
 Creating a package is easy. Create a git repository, or anywhere you can host your package zip file, then contribute your `package_name.json` to one of the buckets, such as main.
 
 ### Zip and upload your package to your host
-Each package zip must contain an entry point named **main.nvgt** so it can be used with `#include "<name>/main.nvgt"`. If you use a different entry point name, document it in the package. However, using different name other than **main.nvgt** is generally not recommended.
+Each package zip must contain an entry point named `main.nvgt` or `<package_name>.nvgt` so it can be used with `#include "<name>/<f>.nvgt"`. If you use a different entry point name, document it in the package. However, using different name other than `main.nvgt` and `<package_name>.nvgt` is generally not recommended.
 
 A package can contain multiple scripts and subdirectories.
 

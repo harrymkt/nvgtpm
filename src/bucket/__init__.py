@@ -1,7 +1,7 @@
 import json
 import os
 from src import paths
-from .import cmd
+from . import cmd
 
 class bucket:
 	def __init__(self):

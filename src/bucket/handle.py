@@ -29,7 +29,7 @@ def add(args):
 			print(f"Warning: Target folder \"{source}\" does not contain a 'json' subdirectory.")
 		print(f"Added local bucket tracking '{name}' -> {source}")
 	else:
-		sync_remote_bucket_manifests(name, source)
+		bucket.sync_remote_bucket_manifests(name, source)
 
 def remove(name):
 	buckets = bucket.load_buckets()
