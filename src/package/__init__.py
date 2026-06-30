@@ -10,7 +10,6 @@ class package:
 		self.version = None
 		self.url = None
 		self.entry = None
-		self.extract_dir = None
 		self.bucket = None
 		if data:
 			self.load(data)
@@ -24,8 +23,6 @@ class package:
 			d["url"] = self.url
 		if self.entry is not None:
 			d["entry"] = self.entry
-		if self.extract_dir is not None:
-			d["extract_dir"] = self.extract_dir
 		if self.bucket is not None:
 			d["bucket"] = self.bucket
 		return d
@@ -40,8 +37,6 @@ class package:
 				self.url = data["url"]
 			if "entry" in data:
 				self.entry = data["entry"]
-			if "extract_dir" in data:
-				self.extract_dir = data["extract_dir"]
 			if "bucket" in data:
 				self.bucket = data["bucket"]
 	

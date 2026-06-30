@@ -6,9 +6,9 @@ NVGTPM tracks installed packages, resolves dependencies from bucket manifests, a
 [Bucket Creation Developer Guide](bucket-guide.md)
 
 ## Usage
-Use `nvgtpm --help`, or `nvgtpm -h`, to view a list of commands which may contain commands that are not yet documented here.
+Use `nvgtpm --help`, or `nvgtpm -h`, to view a list of commands which may contain commands that are not yet documented here. For help on a specific command, use `nvgtpm <command> --help` or just `nvgtpm <command> -h`.
 
-Note: if you are running NVGTPM from source, use `python nvgtpm.py <command>`
+Note: if you are running NVGTPM from source, use `python nvgtpm.py <command>` up to the root of the repository of directory containing the script.
 
 ### Managing Buckets
 Buckets are sources of packages. A bucket can be a local directory or a remote GitHub repository that exposes a `json/` folder containing package manifests.
@@ -53,6 +53,7 @@ nvgtpm install <packages>
 Thus, if you want to install 3 packages, you would use the following command:
 ```bash
 nvgtpm install p1 p2 p3
+```
 
 You can also specify a bucket in each package explicitly to install from specific sources:
 ```bash
@@ -144,7 +145,6 @@ Each package manifest is a JSON file named `<package_name>.json`. Note: you can 
 | `version` | String | Release version, i.e. `"1.2.0"`. Used to detect updates. You can also use as build number if you wish, i.e. `"yyyy.mm.dd"`, `"1970.01.15"`. | Yes |
 | `description` | String | Brief summary of the package. | No |
 | `url` | String | Remote HTTPS zip URL, local zip path, or relative directory path. | Yes |
-| `extract_dir` | String | Folder name inside `nvgt/include/`. Defaults to package name if omitted. | No |
 
 ### Final Step
 - Add the created manifest JSON file to one of the buckets, usually on GitHub, into their json directory.

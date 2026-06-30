@@ -35,6 +35,6 @@ def init_environment():
 	except:
 		pass
 	
-	if not os.path.exists(buckets_tracking_file) or len(cbuckets) == 0:
+	if not os.path.exists(buckets_tracking_file) or not buckets or len(cbuckets) == 0:
 		with open(buckets_tracking_file, "w") as f:
 			json.dump(default_buckets, f, indent=2)

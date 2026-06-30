@@ -12,7 +12,7 @@ jobs:
         include:
           - os: windows-latest
             artifact_name: nvgtpm.exe
-            asset_name: nvgtpm-windows.exe
+            asset_name: nvgtpm.exe
           - os: macos-latest
             artifact_name: nvgtpm
             asset_name: nvgtpm-macos
@@ -50,7 +50,7 @@ jobs:
       - name: Download Windows Binary
         uses: actions/download-artifact@v8
         with:
-          name: nvgtpm-windows.exe
+          name: nvgtpm.exe
           path: ./downloads/windows
       - name: Download macOS Binary
         uses: actions/download-artifact@v8
@@ -65,7 +65,7 @@ jobs:
       - name: Structure Assets for Deployment
         run: |
           mkdir -p release
-          mv ./downloads/windows/nvgtpm.exe ./release/nvgtpm-windows.exe
+          mv ./downloads/windows/nvgtpm.exe ./release/nvgtpm.exe
           mv ./downloads/macos/nvgtpm ./release/nvgtpm-macos
           mv ./downloads/linux/nvgtpm ./release/nvgtpm-linux
           chmod +x ./release/nvgtpm-macos
@@ -74,8 +74,9 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            release/nvgtpm-windows.exe
+            release/nvgtpm.exe
             release/nvgtpm-macos
             release/nvgtpm-linux
           draft: false
           prerelease: false
+          body_path: "unreleased-changes.md"

@@ -4,7 +4,7 @@ import urllib.request
 import zipfile
 from src import bucket, package, paths
 
-def cleanup():
+def cleanup(args):
 	c = 0
 	files = os.listdir(paths.cache_dir)
 	if len(files) == 0:
@@ -56,7 +56,7 @@ def install(package_names, requirement_file, force_update=False, force=False):
 		pkg_version = manifest.version or "1.0.0"
 		url_or_path = manifest.url
 		bucket_name = b.name
-		target_path = os.path.join(include_dir, manifest.extract_dir or pkg_name)
+		target_path = os.path.join(include_dir, pkg_name)
 		zip_payload_path = None
 		installed = False
 		if url_or_path and manifest.is_local:
@@ -105,7 +105,8 @@ def install(package_names, requirement_file, force_update=False, force=False):
 			except Exception as e:
 				print(f"Warning: install succeeded but failed to write manifest: {e}")
 
-def uninstall(package_name):
+def uninstall(args):
+	package_name = args.package
 	include_dir = paths.get_nvgt_include_dir()
 	pkg_name = package_name.lower()
 	target_path = os.path.join(include_dir, pkg_name)
@@ -115,7 +116,7 @@ def uninstall(package_name):
 	else:
 		print(f"Error: Package {pkg_name} is not currently installed.")
 
-def list():
+def list(args):
 	packages = package.get_installed_packages()
 	if not packages:
 		print("No packages currently installed.")

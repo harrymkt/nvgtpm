@@ -1,10 +1,13 @@
 class version:
+	"""A class to compare version"""
 	def __init__(self, input_str: str):
+		"""Initializes the class with a given version, parsing as it is necessary."""
 		self._vers = []
 		self._ver = ""
 		self.version = input_str
 	
 	def _setup(self, inp: str):
+		"""Parse and set up the version."""
 		self._vers = [part.strip() for part in inp.split(".")]
 	
 	def __getitem__(self, n: int) -> str:
@@ -14,6 +17,9 @@ class version:
 		return len(self._vers)
 	
 	def _compare(self, other: "version") -> int:
+		"""Compare against another version instance.
+		Returns a positive value if the current version is greater than the other. Returns a negative value if the current is less than the other. Otherwise, returns 0."""
+		
 		max_len = max(len(self), len(other))
 		for i in range(max_len):
 			a = self[i] if i < len(self) else "0"
