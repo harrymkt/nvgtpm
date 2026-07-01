@@ -123,10 +123,12 @@ The format returned by this command will be `#include "<package_name>/<f>.nvgt"`
 Add `-c` or `--copy` option to copy the declaration syntax to clipboard as well.
 
 ### Clearing cache
-Remove all cached zip files downloaded during package installations.
+Remove all cached zip files downloaded during package installations, from a given pattern.
 ```bash
-nvgtpm cleanup
+nvgtpm cache rm <pattern>
 ```
+
+Use `*` to remove all files.
 
 ## Creating a Package
 ### Introduction

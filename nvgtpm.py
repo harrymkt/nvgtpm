@@ -1,10 +1,10 @@
 import argparse
 import application as app
-from src import bucket, package
+from src import bucket, package, cmd
 
 def main():
 	parser = argparse.ArgumentParser(allow_abbrev=False, description=f"NVGTPM version {app.version}: A Package Manager for NVGT Modules known as include scripts")
-	subparsers = parser.add_subparsers(dest="command")
+	subparsers = parser.add_subparsers(dest="command", title="Available commands:")
 	bucket.cmd.register(subparsers)
 	
 	install_parser = subparsers.add_parser("install", description="Install targeted script modules, includes", help="Install script modules, includes")
@@ -34,7 +34,7 @@ def main():
 	update_parser.set_defaults(func=package.handle.update_command)
 	
 	subparsers.add_parser("create", help="Create package manifests", description="Create package manifests").set_defaults(func=package.create_package)
-	subparsers.add_parser("cleanup", help="Clean cache files", description="Cleans up cached files").set_defaults(func=package.handle.cleanup)
+	cmd.cache.register(subparsers)
 	subparsers.add_parser("status", help="Check status of module updates", description="Check module updates").set_defaults(func=package.status)
 	
 	args = parser.parse_args()

@@ -4,19 +4,6 @@ import urllib.request
 import zipfile
 from src import bucket, package, paths
 
-def cleanup(args):
-	c = 0
-	files = os.listdir(paths.cache_dir)
-	if len(files) == 0:
-		print("No cache to clean")
-		return
-	for x in files:
-		fn = os.path.join(paths.cache_dir, x)
-		if not os.path.exists(fn): continue
-		os.remove(fn)
-		c += 1
-	print(f"{c} cache {"file" if c == 1 else "files"} removed")
-
 def install(package_names, requirement_file, force_update=False, force=False):
 	if not package_names and not requirement_file:
 		print("Error: The install command requires explicit arguments inputs fields.")

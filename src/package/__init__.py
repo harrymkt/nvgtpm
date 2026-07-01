@@ -62,6 +62,18 @@ def get_installed_packages():
 		return []
 	return [d for d in os.listdir(include_dir) if os.path.isdir(os.path.join(include_dir, d))]
 
+def list_installed_packages(bucket_name=None):
+	buckets = bucket.load()
+	b = None
+	if bucket_name: b = bucket.find(buckets, bucket_name)
+	result = []
+	for pkg in get_installed_packages():
+		m = load_current_info(pkg)
+		if not m: continue
+		if b and not b.name == m.bucket: continue
+		result.append(m)
+	return result
+
 def load_manifest_from(path, package_name):
 	if not os.path.exists(path): return None
 	try:
