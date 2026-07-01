@@ -25,23 +25,23 @@ class bucket:
 	def is_local(self):
 		return self.source and not self.source.startswith(("http://", "https://"))
 	
-	def make_path(self, package_name):
+	def make_path(self, module_name):
 		if not self.is_local:
-			return os.path.join(self.dir, f"{package_name}.json")
-		return os.path.join(self.dir, "json", f"{package_name}.json")
+			return os.path.join(self.dir, f"{module_name}.json")
+		return os.path.join(self.dir, "json", f"{module_name}.json")
 	
-	def load_manifest(self, package_name):
-		from src.package import package
-		p = self.make_path(package_name)
+	def load_manifest(self, module_name):
+		from src import module
+		p = self.make_path(module_name)
 		if not os.path.exists(p): return None
 		try:
 			with open(p, "r") as f:
 				data = json.load(f)
-				pkg = package()
+				mdl = module()
 				temp_manifest = data
-				temp_manifest["name"] = package_name
-				pkg.load(temp_manifest)
-				return pkg
+				temp_manifest["name"] = module_name
+				mdl.load(temp_manifest)
+				return mdl
 		except:
 			pass
 		return None

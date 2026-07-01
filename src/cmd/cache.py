@@ -8,7 +8,7 @@ def search(pattern):
 	result = []
 	for f in os.listdir(paths.cache_dir):
 		fn = os.path.join(paths.cache_dir, f)
-		if not os.path.exist(fn): continue
+		if not os.path.exists(fn): continue
 		if not fnmatch(f, pattern): continue
 		d = {
 			"name": f,
@@ -28,11 +28,12 @@ def remove(args):
 	for x in search(pattern):
 		f = x["name"]
 		fn = x["path"]
-		size = f["size"]
+		size = x["size"]
 		print(f"Removing {f}, {helper.convert_size(size)}...")
 		os.remove(fn)
 		totalsize += size
 		c += 1
+	
 	if c == 0:
 		print("No files to remove with this pattern")
 		return
@@ -40,7 +41,7 @@ def remove(args):
 
 def register(p):
 	bp = p.add_parser("cache", help="Manage cache", description="Manage cache files")
-	s = bp.add_subparsers(dest="sub")
+	s = bp.add_subparsers(dest="subcommand", title="Available Commands:")
 	rm = s.add_parser("rm", help="Remove one or more cache files")
 	rm.add_argument("pattern", help="A pattern to remove cache")
 	rm.set_defaults(func=remove)

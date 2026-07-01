@@ -5,7 +5,7 @@ from src import paths, bucket, version
 from . import handle
 from .search import *
 
-class package:
+class module:
 	def __init__(self, data=None):
 		self.name = None
 		self.version = None
@@ -62,67 +62,64 @@ class package:
 		with open(path, "w", encoding="utf-8") as f:
 			json.dump(self.json, f, indent=2)
 
-def get_installed_packages():
+def get_installed_modules():
 	include_dir = paths.get_nvgt_include_dir()
 	if not os.path.exists(include_dir):
 		return []
 	return [d for d in os.listdir(include_dir) if os.path.isdir(os.path.join(include_dir, d))]
 
-def list_installed_packages(bucket_name=None):
-	buckets = bucket.load()
-	b = None
-	if bucket_name: b = bucket.find(buckets, bucket_name)
+def list_installed_modules(bucket_name=None):
 	result = []
-	for pkg in get_installed_packages():
-		m = load_current_info(pkg)
+	for mod in get_installed_modules():
+		m = load_current_info(mod)
 		if not m: continue
-		if b and not b.name == m.bucket: continue
+		if bucket_name and not bucket_name == m.bucket: continue
 		result.append(m)
 	return result
 
-def load_manifest_from(path, package_name):
+def load_manifest_from(path, module_name):
 	if not os.path.exists(path): return None
 	try:
 		with open(path, "r") as f:
 			data = json.load(f)
-			pkg = package()
+			mod = module()
 			temp_manifest = data
-			temp_manifest["name"] = package_name
-			pkg.load(temp_manifest)
-			return pkg
+			temp_manifest["name"] = module_name
+			mod.load(temp_manifest)
+			return mod
 	except:
 		pass
 	return None
 
-def locate_and_load_manifest(package_name, buckets=None):
+def locate_and_load_manifest(module_name, buckets=None):
 	buckets = buckets or bucket.load()
 	bucket_name = None
-	pkg_name = package_name
-	if "/" in package_name:
-		parts = package_name.split("/", 1)
+	mod_name = module_name
+	if "/" in module_name:
+		parts = module_name.split("/", 1)
 		bucket_name = parts[0].lower()
-		pkg_name = parts[1]
+		mod_name = parts[1]
 		b = bucket.find(buckets, bucket_name)
 		if not b:
 			return None, None
-		p = b.make_path(pkg_name)
+		p = b.make_path(mod_name)
 		if not os.path.exists(p):
 			return None, None
-		pkg = load_manifest_from(p, pkg_name)
-		if pkg:
-			pkg.bucket = b.name
-			return pkg, b
+		mod = load_manifest_from(p, mod_name)
+		if mod:
+			mod.bucket = b.name
+			return mod, b
 		return None, None
 	for b in buckets:
 		if b.name == bucket_name:
 			continue
-		p = b.make_path(package_name)
+		p = b.make_path(module_name)
 		if not os.path.exists(p):
 			continue
-		pkg = load_manifest_from(p, package_name)
-		if pkg:
-			pkg.bucket = b.name
-			return pkg, b
+		mod = load_manifest_from(p, module_name)
+		if mod:
+			mod.bucket = b.name
+			return mod, b
 	return None, None
 
 def load_current_info(name):
@@ -132,18 +129,18 @@ def load_current_info(name):
 	if not os.path.exists(p): return None
 	return load_manifest_from(p, name)
 
-def show_package_info(name, pkg, bucket_name):
-	if name == "" or not pkg: return
-	print(f"| {name} | {pkg.version or 'unknown'} | {bucket_name} | {pkg.description or ""} |")
+def show_info(name, mod, bucket_name=None):
+	if name == "" or not mod: return
+	print(f"| {name} | {mod.version or "unknown"} | {bucket_name or mod.bucket or ""} | {mod.description or ""} |")
 
-def _check_package_update(pkg, buckets, force=False):
-	manifest = load_current_info(pkg)
+def _check_module_update(mod, buckets, force=False):
+	manifest = load_current_info(mod)
 	if not manifest:
 		return None
 	current_bucket = bucket.find(buckets, manifest.bucket or "main")
 	if not current_bucket:
 		return None
-	latest_manifest = current_bucket.load_manifest(pkg)
+	latest_manifest = current_bucket.load_manifest(mod)
 	if not latest_manifest:
 		return None
 	vc = version.version(manifest.version or "0.0.0")
@@ -153,14 +150,14 @@ def _check_package_update(pkg, buckets, force=False):
 	return None
 
 def status(args):
-	pkgs = get_installed_packages()
-	if len(pkgs) == 0:
-		print("No modules installed")
+	mods = get_installed_modules()
+	if len(mods) == 0:
+		print("No modules are installed")
 		return
 	buckets = bucket.load()
 	c = 0
 	prints = []
-	for x in pkgs:
+	for x in mods:
 		manifest = load_current_info(x)
 		if not manifest: continue
 		b = bucket.find(buckets, manifest.bucket or "main")
@@ -184,7 +181,7 @@ def status(args):
 def decl(args):
 	manifest = load_current_info(args.name)
 	if not manifest:
-		print(f"Error. Package {args.name} does not seem to have installed.")
+		print(f"Error. Module {args.name} does not seem to have installed.")
 		sys.exit(1)
 		return
 	m = "main"
@@ -196,24 +193,24 @@ def decl(args):
 		clip.copy(msg)
 	return
 
-def create_package(args):
-	pkg = package()
-	pkg.name = input("Package name")
-	if not pkg.name:
-		print("Error. A package must have a name.")
+def create_module(args):
+	mod = module()
+	mod.name = input("Module name")
+	if not mod.name:
+		print("Error. A module must have a name.")
 		return
-	elif " " in pkg.name:
+	elif " " in mod.name:
 		print("Error. The name must not contain spaces")
 		return
-	pkg.url = input("A link to download, or a path on the local file system")
-	if not pkg.url:
+	mod.url = input("A link to download, or a path on the local file system")
+	if not mod.url:
 		print("Error. A link to download or a path is required.")
 		return
-	pkg.version = input("Version")
-	if not pkg.version:
-		print("Error. A package requires its version.")
+	mod.version = input("Version")
+	if not mod.version:
+		print("Error. A module requires its version.")
 		return
-	pkg.description = input("Package description, a short summary, optional")
-	with open(f"{pkg.name}.json", "w", encoding="utf-8") as f:
-		json.dump(pkg.json, f, indent=2)
-	print(f"Successfully created {pkg.name}.json")
+	mod.description = input("Module description, a short summary, optional")
+	with open(f"{mod.name}.json", "w", encoding="utf-8") as f:
+		json.dump(mod.json, f, indent=2)
+	print(f"Successfully created {mod.name}.json")

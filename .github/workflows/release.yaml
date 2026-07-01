@@ -21,7 +21,8 @@ jobs:
             artifact_name: nvgtpm
             asset_name: nvgtpm-linux
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout
+        uses: actions/checkout@v7
       - name: Set up Python Environment
         uses: actions/setup-python@v6
         with:

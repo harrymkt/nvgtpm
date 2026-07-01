@@ -2,7 +2,7 @@ from . import handle
 
 def register(p):
 	bp = p.add_parser("bucket", help="Manage buckets where you get modules from", description="Manage buckets")
-	bs = bp.add_subparsers(dest="subcommand")
+	bs = bp.add_subparsers(dest="subcommand", title="Available Commands:")
 	b_add = bs.add_parser("add", description="add an external workspace path folder or Git repository URL, as a bucket", help="Add a bucket")
 	b_add.add_argument("name", help="Bucket shorthand tracking reference name")
 	b_add.add_argument("source", nargs="?", default="", help="GitHub repo HTTPS URL or local directory file path. Can be optional if the bucket is in the list of known buckets.")
