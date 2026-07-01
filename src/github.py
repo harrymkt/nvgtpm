@@ -3,7 +3,7 @@ import json
 import os
 import re
 import shutil
-import urllib.request
+import requests
 import zipfile
 
 def parse_github_url(url):
@@ -31,13 +31,10 @@ def download_and_extract_manifest_zip(source_url, target_bucket_dir):
 	# GitHub's clean zip snapshot endpoint for the default bucket
 	archive_url = f"https://github.com/{user}/{repo}/archive/refs/heads/main.zip"
 	try:
-		req = urllib.request.Request(
-			archive_url,
-			headers={"User-Agent": "NVGTPM-Package-Manager-Client"}
-		)
+		response = requests.get(archive_url, timeout=15, stream=True, allow_redirects=True, headers={"User-Agent": "NVGTPM-Package-Manager-Client"})
+		response.raise_for_status()
 		# Download the entire repository as an in-memory byte stream to prevent disk thrashing
-		with urllib.request.urlopen(req, timeout=15) as response:
-			zip_data = io.BytesIO(response.read())
+		zip_data = io.BytesIO(response.content)
 		# Clean out old local bucket directory structure completely to clear ghost packages
 		if os.path.exists(target_bucket_dir):
 			shutil.rmtree(target_bucket_dir)

@@ -1,8 +1,8 @@
 import json, os, shutil
 import sys
-import urllib.request
+import requests
 import zipfile
-from src import bucket, package, paths
+from src import bucket, helper, package, paths
 
 def install(package_names, requirement_file, force_update=False, force=False):
 	if not package_names and not requirement_file:
@@ -61,13 +61,24 @@ def install(package_names, requirement_file, force_update=False, force=False):
 			zip_payload_path = os.path.join(paths.cache_dir, zip_filename)
 			if force_update and os.path.exists(zip_payload_path):
 				os.remove(zip_payload_path)
-			if not os.path.exists(zip_payload_path):
+			try:
+				head = requests.head(url_or_path, timeout=15, headers={"User-Agent": "NVGTPM-Package-Manager-Client"})
+				head.raise_for_status()
+				content_length = int(head.headers.get("Content-Length", 0))
+				size_str = helper.convert_size(content_length) if content_length > 0 else "unknown size"
+				print(f"Downloading release archive for {pkg_name} ({size_str}) from {bucket_name} bucket...")
+			except Exception:
 				print(f"Downloading release archive for {pkg_name} from {bucket_name} bucket...")
-				try:
-					urllib.request.urlretrieve(url_or_path, zip_payload_path)
-				except Exception as e:
-					print(f"Failed to download asset archive: {e}")
-					continue
+			try:
+				with requests.get(url_or_path, timeout=30, stream=True, headers={"User-Agent": "NVGTPM-Package-Manager-Client"}) as response:
+					response.raise_for_status()
+					with open(zip_payload_path, "wb") as f:
+						for chunk in response.iter_content(chunk_size=8192):
+							if chunk:
+								f.write(chunk)
+			except Exception as e:
+				print(f"Failed to download asset archive: {e}")
+				continue
 		if zip_payload_path:
 			if os.path.exists(target_path):
 				shutil.rmtree(target_path)
