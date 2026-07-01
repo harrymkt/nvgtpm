@@ -82,10 +82,12 @@ nvgtpm uninstall <package>
 ```
 
 #### Searching for a package
-Look up a package by name across all active buckets.
+Look up packages by a given pattern across all active buckets.
 ```bash
-nvgtpm search <package>
+nvgtpm search <pattern>
 ```
+
+This means that using `nvgtpm search *` is equal to `nvgtpm list` command.
 
 ### Updating and Maintenance
 #### Checking status
@@ -153,5 +155,7 @@ Note: you can also use `nvgtpm create` to create a package, which will bring up 
 ### Final Step
 - Add the created manifest JSON file to one of the buckets, usually on GitHub, into their json directory.
 - Commit your changes to the bucket repository, and make a pull request. Wait for the package to be approved.
+
+To update the package, edit the JSON file again with the necessary info updated like version and URL.
 
 That's it!

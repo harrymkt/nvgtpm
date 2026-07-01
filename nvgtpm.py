@@ -19,7 +19,7 @@ def main():
 	subparsers.add_parser("list", description="List all installed modules inside NVGT's include directory").set_defaults(func=package.handle.list)
 	
 	search = subparsers.add_parser("search", description="Search a specific module", help="Search modules")
-	search.add_argument("package", help="Name string of the module to search")
+	search.add_argument("pattern", help="Pattern to search")
 	search.set_defaults(func=package.search)
 	
 	decl = subparsers.add_parser("decl", description="Retrieve the syntax to use a specific installed module", help="Retrieve the syntax to utilize a module")

@@ -109,8 +109,8 @@ def list(args):
 		print("No packages currently installed.")
 		return
 	print("Installed NVGT Packages:")
-	print("| Name | Version | bucket name |")
-	print("|---|---|---|")
+	print("| Name | Version | bucket name | description |")
+	print("|---|---|---|---|")
 	for pkg in sorted(packages):
 		manifest = package.load_current_info(pkg)
 		package.show_package_info(pkg, manifest, manifest.bucket if manifest else "unknown")

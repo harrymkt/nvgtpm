@@ -3,6 +3,7 @@ import os
 import sys
 from src import paths, bucket, version
 from . import handle
+from .search import *
 
 class package:
 	def __init__(self, data=None):
@@ -11,6 +12,7 @@ class package:
 		self.url = None
 		self.entry = None
 		self.bucket = None
+		self.description = None
 		if data:
 			self.load(data)
 	
@@ -25,6 +27,8 @@ class package:
 			d["entry"] = self.entry
 		if self.bucket is not None:
 			d["bucket"] = self.bucket
+		if self.description is not None:
+			d["description"] = self.description
 		return d
 	
 	def load(self, data):
@@ -39,6 +43,8 @@ class package:
 				self.entry = data["entry"]
 			if "bucket" in data:
 				self.bucket = data["bucket"]
+			if "description" in data:
+				self.description = data["description"]
 	
 	@property
 	def dir(self):
@@ -128,7 +134,7 @@ def load_current_info(name):
 
 def show_package_info(name, pkg, bucket_name):
 	if name == "" or not pkg: return
-	print(f"| {name} | {pkg.version or 'unknown'} | {bucket_name} |")
+	print(f"| {name} | {pkg.version or 'unknown'} | {bucket_name} | {pkg.description or ""} |")
 
 def _check_package_update(pkg, buckets, force=False):
 	manifest = load_current_info(pkg)
@@ -175,26 +181,6 @@ def status(args):
 	for x in prints:
 		print(x)
 
-def search(args):
-	term = args.package.lower()
-	buckets = bucket.load()
-	bc = None
-	for b in buckets:
-		if term in b.list:
-			bc = b
-			break
-	
-	if not bc:
-		print(f"There is no package matching {term}")
-		sys.exit(1)
-		return
-	manifest = bc.load_manifest(term)
-	if not manifest:
-		print(f"Error. Manifest for {term} cannot be determined")
-		sys.exit(1)
-		return
-	show_package_info(term, manifest, bc.name)
-
 def decl(args):
 	manifest = load_current_info(args.name)
 	if not manifest:
@@ -227,6 +213,7 @@ def create_package(args):
 	if not pkg.version:
 		print("Error. A package requires its version.")
 		return
+	pkg.description = input("Package description, a short summary, optional")
 	with open(f"{pkg.name}.json", "w", encoding="utf-8") as f:
 		json.dump(pkg.json, f, indent=2)
 	print(f"Successfully created {pkg.name}.json")
