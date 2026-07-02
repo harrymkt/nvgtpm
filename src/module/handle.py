@@ -172,3 +172,21 @@ def update_command(args):
 	
 	if not updates_to_perform: return
 	install(updates_to_perform, None, force_update=True, force=args.force)
+
+def homepage(args):
+	manifest = module.load_current_info(args.name)
+	if not manifest: manifest, b = module.locate_and_load_manifest(args.name)
+	if not manifest:
+		print(f"module {args.name} not found")
+		return
+	elif not manifest.homepage:
+		print(f"Error. Module {manifest.name or args.name} does not have ahome page URL to open")
+		return
+	import webbrowser as w
+	if not w.open(manifest.homepage):
+		print(f"Error. Failed to open the home page URL of module {manifest.name or args.name}")
+		print("---")
+		print(manifest.homepage)
+		sys.exit(1)
+		return
+	print(f"Home page URL of {manifest.name or args.name} module opened successfully in your browser.")

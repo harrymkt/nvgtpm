@@ -19,6 +19,7 @@ default_buckets = {
 }
 
 def get_nvgt_include_dir():
+	"""Returns a path to the directory containing NVGT executable."""
 	nvgt_path = shutil.which("nvgt")
 	if not nvgt_path:
 		print("Error: Could not locate 'nvgt' executable on system PATH.")
@@ -26,6 +27,7 @@ def get_nvgt_include_dir():
 	return os.path.join(os.path.dirname(nvgt_path), "include")
 
 def init_environment():
+	"""Initializes the environment of necessary verifications."""
 	os.makedirs(cache_dir, exist_ok=True)
 	os.makedirs(buckets_root, exist_ok=True)
 	import json

@@ -7,14 +7,14 @@ def main():
 	subparsers = parser.add_subparsers(dest="command", title="Available commands:")
 	bucket.cmd.register(subparsers)
 	
-	install_parser = subparsers.add_parser("install", description="Install script modules, includes", help="Install script modules, includes")
-	install_parser.add_argument("modules", nargs="*", help="Space-separated list of module names to install")
-	install_parser.add_argument("-r", "--requirement", help="Install modules from a file")
-	install_parser.set_defaults(func=lambda args: module.handle.install(args.modules, args.requirement))
+	install = subparsers.add_parser("install", description="Install script modules, includes", help="Install script modules, includes")
+	install.add_argument("modules", nargs="*", help="Space-separated list of module names to install")
+	install.add_argument("-r", "--requirement", help="Install modules from a file")
+	install.set_defaults(func=lambda args: module.handle.install(args.modules, args.requirement))
 	
-	uninstall_parser = subparsers.add_parser("uninstall", description="Purge an installed module and its directory completely", help="Uninstall a module")
-	uninstall_parser.add_argument("module", help="Name of the module to uninstall")
-	uninstall_parser.set_defaults(func=module.handle.uninstall)
+	uninstall = subparsers.add_parser("uninstall", description="Purge an installed module and its directory completely", help="Uninstall a module")
+	uninstall.add_argument("module", help="Name of the module to uninstall")
+	uninstall.set_defaults(func=module.handle.uninstall)
 	
 	subparsers.add_parser("list", description="List all installed modules inside NVGT's include directory").set_defaults(func=module.handle.list)
 	
@@ -27,15 +27,19 @@ def main():
 	decl.add_argument("-c", "--copy", help="Copy the declaration syntax to clipboard", action="store_true")
 	decl.set_defaults(func=module.decl)
 	
-	update_parser = subparsers.add_parser("update", description="Synchronize modules and buckets", help="Update modules and buckets")
-	update_parser.add_argument("-bks", "--buckets", action="store_true", help="Download latest manifests from remote buckets")
-	update_parser.add_argument("-f", "--force", action="store_true", help="Force the update")
-	update_parser.add_argument("modules", nargs="*", help="Explicit selection labels, or '*' wildcard characters to upgrade all modules")
-	update_parser.set_defaults(func=module.handle.update_command)
+	update = subparsers.add_parser("update", description="Synchronize modules and buckets", help="Update modules and buckets")
+	update.add_argument("-bks", "--buckets", action="store_true", help="Download latest manifests from remote buckets")
+	update.add_argument("-f", "--force", action="store_true", help="Force the update")
+	update.add_argument("modules", nargs="*", help="Explicit selection labels, or '*' wildcard characters to upgrade all modules")
+	update.set_defaults(func=module.handle.update_command)
 	
 	subparsers.add_parser("create", help="Create module manifests", description="Create module manifests").set_defaults(func=module.create_module)
 	cmd.cache.register(subparsers)
 	subparsers.add_parser("status", help="Check status of module updates", description="Check module updates").set_defaults(func=module.status)
+	
+	home = subparsers.add_parser("home", description="Open the home page of a module (if available)", help="Open the home page of a module")
+	home.add_argument("name", help="Name of the module")
+	home.set_defaults(func=module.handle.homepage)
 	
 	args = parser.parse_args()
 	if hasattr(args, "func"):

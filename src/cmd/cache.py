@@ -1,6 +1,6 @@
 from src import paths, helper
 from fnmatch import fnmatch
-import os
+import os, sys
 
 # Functions
 def search(pattern):
@@ -21,7 +21,8 @@ def search(pattern):
 def remove(args):
 	pattern = args.pattern
 	if not pattern:
-		print("No pattern is given")
+		print("Error. No pattern is given")
+		sys.exit(1)
 		return
 	totalsize = 0
 	c = 0
@@ -41,7 +42,7 @@ def remove(args):
 	print(f"Removed {c} {"file" if c == 1 else "files"}, {helper.convert_size(totalsize)}")
 
 def register(p):
-	bp = p.add_parser("cache", help="Manage cache", description="Manage cache files")
+	bp = p.add_parser("cache", help="Manage cache files", description="Manage cache")
 	s = bp.add_subparsers(dest="subcommand", title="Available Commands:")
 	rm = s.add_parser("rm", help="Remove one or more cache files")
 	rm.add_argument("pattern", help="A pattern to remove cache")

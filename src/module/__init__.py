@@ -13,22 +13,25 @@ class module:
 		self.entry = None
 		self.bucket = None
 		self.description = None
+		self.homepage = None
 		if data:
 			self.load(data)
 	
 	@property
 	def json(self):
 		d = {}
-		if self.version is not None:
+		if self.version:
 			d["version"] = self.version
-		if self.url is not None:
+		if self.url:
 			d["url"] = self.url
-		if self.entry is not None:
+		if self.entry:
 			d["entry"] = self.entry
-		if self.bucket is not None:
+		if self.bucket:
 			d["bucket"] = self.bucket
-		if self.description is not None:
+		if self.description:
 			d["description"] = self.description
+		if self.homepage:
+			d["homepage"] = self.homepage
 		return d
 	
 	def load(self, data):
@@ -45,6 +48,8 @@ class module:
 				self.bucket = data["bucket"]
 			if "description" in data:
 				self.description = data["description"]
+			if "homepage" in data:
+				self.homepage = data["homepage"]
 	
 	@property
 	def dir(self):
@@ -211,6 +216,7 @@ def create_module(args):
 		print("Error. A module requires its version.")
 		return
 	mod.description = input("Module description, a short summary, optional")
+	mod.homepage = input("Home page to the website or repository of the module, optional")
 	with open(f"{mod.name}.json", "w", encoding="utf-8") as f:
 		json.dump(mod.json, f, indent=2)
 	print(f"Successfully created {mod.name}.json")
