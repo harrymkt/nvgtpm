@@ -53,3 +53,26 @@ Note: you can also use `nvgtpm create` to create a module, which will bring up a
 To update the module, edit the JSON file again with the necessary info updated like version and URL.
 
 That's it!
+
+### Automating module manifest update
+You can use GitHub action to update your module. A file called `<module>.json` must be added in your repository. The file is a copy of the manifest that you have created earlier.
+
+Requirements:
+- You need a personal token with repos scope.
+- The personal token must be set in your repository's secret, named `PAT`.
+- Permission to allow actions to create pull-requests must be enabled in your repository's settings.
+
+Now, type the following command:
+```bash
+nvgtpm create-ga
+```
+
+Follow the prompts.
+
+Asuming that the command is successful, you now have `submit.yaml` file. Copy the file to `.github/workflows` directory in your repository.
+
+Commit and push the changes to the repository.
+
+Now, whenever you update the `<module>.json` file in your repository, the action will do the following:
+- It will create a fork of the target bucket repository on your account if it does not exist. Note: The forked repository will be named `<user>/<bucket_repo_name>`, meaning the name extracted from the bucket repository `owner/repo` format you give to the earlier interactive prompt, will be set.
+- It will then create a pull-request to the bucket repository.
