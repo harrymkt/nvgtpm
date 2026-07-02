@@ -1,5 +1,6 @@
+import math
+
 def convert_size(size, round_place=2):
-	import math
 	sizeunits = ["B", "KB", "MB", "GB", "TB"]
 	if size < 1:
 		return f"0 {sizeunits[0]}"

@@ -29,7 +29,8 @@ def remove(args):
 		f = x["name"]
 		fn = x["path"]
 		size = x["size"]
-		print(f"Removing {f}, {helper.convert_size(size)}...")
+		if not args.silent:
+			print(f"Removing {f}, {helper.convert_size(size)}...")
 		os.remove(fn)
 		totalsize += size
 		c += 1
@@ -44,4 +45,5 @@ def register(p):
 	s = bp.add_subparsers(dest="subcommand", title="Available Commands:")
 	rm = s.add_parser("rm", help="Remove one or more cache files")
 	rm.add_argument("pattern", help="A pattern to remove cache")
+	rm.add_argument("-s", "--silent", help="Do not print what files are being removed")
 	rm.set_defaults(func=remove)

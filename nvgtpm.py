@@ -7,13 +7,13 @@ def main():
 	subparsers = parser.add_subparsers(dest="command", title="Available commands:")
 	bucket.cmd.register(subparsers)
 	
-	install_parser = subparsers.add_parser("install", description="Install targeted script modules, includes", help="Install script modules, includes")
+	install_parser = subparsers.add_parser("install", description="Install script modules, includes", help="Install script modules, includes")
 	install_parser.add_argument("modules", nargs="*", help="Space-separated list of module names to install")
-	install_parser.add_argument("-r", "--requirement", help="Install bulk module listings tracked from a plain text file")
+	install_parser.add_argument("-r", "--requirement", help="Install modules from a file")
 	install_parser.set_defaults(func=lambda args: module.handle.install(args.modules, args.requirement))
 	
 	uninstall_parser = subparsers.add_parser("uninstall", description="Purge an installed module and its directory completely", help="Uninstall a module")
-	uninstall_parser.add_argument("module", help="Name string of the module to uninstall")
+	uninstall_parser.add_argument("module", help="Name of the module to uninstall")
 	uninstall_parser.set_defaults(func=module.handle.uninstall)
 	
 	subparsers.add_parser("list", description="List all installed modules inside NVGT's include directory").set_defaults(func=module.handle.list)
@@ -23,7 +23,7 @@ def main():
 	search.set_defaults(func=module.search)
 	
 	decl = subparsers.add_parser("decl", description="Retrieve the syntax to use a specific installed module", help="Retrieve the syntax to utilize a module")
-	decl.add_argument("name", help="The name of the module that is installed")
+	decl.add_argument("name", help="Name of the module that is installed")
 	decl.add_argument("-c", "--copy", help="Copy the declaration syntax to clipboard", action="store_true")
 	decl.set_defaults(func=module.decl)
 	

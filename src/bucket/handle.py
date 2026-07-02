@@ -12,7 +12,7 @@ def add(args):
 		if name in paths.known_buckets:
 			source = paths.known_buckets.get(name, "")
 	if not source or source == "":
-		print(f"Error: bucket {name} does not contain a path or a link and is not a known bucket")
+		print(f"Error: bucket {name} does not contain a path or a link and is not in one of the known buckets")
 		sys.exit(1)
 		return
 	exist = bucket.find_index(buckets, name)

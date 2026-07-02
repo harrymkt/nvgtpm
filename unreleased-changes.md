@@ -2,3 +2,4 @@
 - Renamed package as module.
 - `search` command has been rewritten to support searching for multiple module results from a given pattern.
 - `description` field in `<module_name>.json` is now activated.
+- Added `-s` or `--silent` option to `cache rm` command that allows you to suppress messages of what files are being removed.
