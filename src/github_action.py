@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 from src import github, paths
 from string import Template
@@ -41,9 +42,10 @@ def create(args):
 		print(f"Failed to create content GitHub action for {name} module.")
 		sys.exit(1)
 		return
-	with open("submit.yaml", "w") as f:
+	outpath = os.path.realpath(os.path.join(os.getcwd(), args.output or "submit.yaml"))
+	with open(outpath, "w") as f:
 		f.write(content)
-		print(f"Created submit.yaml for {name} module.")
+		print(f"Created {os.path.basename(outpath)} in \"{outpath}\" for {name} module.")
 
 value = """name: Auto-Submit to Community Bucket
 env:
@@ -72,10 +74,10 @@ jobs:
       - name: Add JSON into Bucket Directory
         run: |
           # Dynamically extract the directory path from the target file path
-          TARGET_DIR=$(dirname "bucket/${{ env.app_name }}.json")
+          TARGET_DIR=$(dirname "bucket/json/${{ env.app_name }}.json")
           mkdir -p "$TARGET_DIR"
           # Copy the file
-          cp "${{ env.app_name }}.json" "bucket/${{ env.app_name }}.json"
+          cp "${{ env.app_name }}.json" "bucket/json/${{ env.app_name }}.json"
       - name: Create Pull Request via Auto-Fork
         uses: peter-evans/create-pull-request@v8
         with:
