@@ -5,11 +5,11 @@ from src import github, paths
 def create(args):
 	name = input("Module name that is used to construct <module>.json")
 	if not name:
-		print("Error. Name is required")
+		print("Error. Name is required.")
 		sys.exit(1)
 		return
 	elif " " in name:
-		print("Error. Module name must not contain spaces")
+		print("Error. Module name must not contain spaces.")
 		sys.exit(1)
 		return
 	bkrepo = input("owner/repo format of the bucket repository. Leave it empty for the main bucket")
@@ -17,20 +17,17 @@ def create(args):
 		mbko, mbkr = github.parse_github_url(paths.main_bucket_url)
 		bkrepo = f"{mbko}/{mbkr}"
 	if not bkrepo:
-		print("Error. Bucket repository cannot be determined")
-		sys.exit(1)
-	lines = bkrepo.split("/")
-	if not lines or len(lines) != 2:
-		print(f"Error. {bkrepo} is invalid. It must be owner/repo format")
+		print("Error. Bucket repository cannot be determined.")
 		sys.exit(1)
 		return
-	bucket_owner, bucket_repo = lines
+	bucket_owner, bucket_repo = github.parse_repo(bkrepo, True)
 	if not bucket_owner or not bucket_repo:
-		print("Error. Bucket owner and repository are invalid")
+		print(f"Error. Bucket owner and repository are invalid. Expected owner/repo, got \"{bkrepo}\".")
 		sys.exit(1)
+		return
 	user = input("Your GitHub username")
 	if not user:
-		print("Error. You need a GitHub username")
+		print("Error. You need a GitHub username.")
 		sys.exit(1)
 		return
 	d = {
@@ -40,12 +37,12 @@ def create(args):
 	}
 	content = value.format(**d)
 	if not content:
-		print("Failed to create content")
+		print(f"Failed to create content GitHub action for {name} module.")
 		sys.exit(1)
 		return
 	with open("submit.yaml", "w") as f:
 		f.write(content)
-		print(f"Created submit.yaml for {name} module")
+		print(f"Created submit.yaml for {name} module.")
 
 value = """name: Auto-Submit to Community Bucket
 env:
@@ -79,7 +76,7 @@ jobs:
           # Copy the file
           cp "${{ env.app_name }}.json" "bucket/${{ env.app_name }}.json"
       - name: Create Pull Request via Auto-Fork
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.PAT }}
           path: bucket

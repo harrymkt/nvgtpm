@@ -12,7 +12,7 @@ def add(args):
 		if name in paths.known_buckets:
 			source = paths.known_buckets.get(name, "")
 	if not source or source == "":
-		print(f"Error: bucket {name} does not contain a path or a link and is not in one of the known buckets")
+		print(f"Error: bucket {name} does not contain a path or a link and is not in one of the known buckets.")
 		sys.exit(1)
 		return
 	exist = bucket.find_index(buckets, name)
@@ -67,14 +67,14 @@ def homepage(args):
 	buckets = bucket.load()
 	b = bucket.find(buckets, args.name.lower())
 	if not b:
-		print(f"Bucket {args.name} not found")
+		print(f"Bucket {args.name} not found.")
 		return
 	elif b.is_local:
-		print(f"Error. Bucket {b.name} is a local bucket and does not have a URL to open")
+		print(f"Error: bucket {b.name} is a local bucket and does not have a URL to open.")
 		return
 	import webbrowser as w
 	if not w.open(b.source):
-		print(f"Error. Failed to open the URL of bucket {b.name}")
+		print(f"Error: failed to open the URL of bucket {b.name}")
 		print("---")
 		print(b.source)
 		sys.exit(1)

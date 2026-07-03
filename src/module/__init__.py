@@ -157,7 +157,7 @@ def _check_module_update(mod, buckets, force=False):
 def status(args):
 	mods = get_installed_modules()
 	if len(mods) == 0:
-		print("No modules are installed")
+		print("No modules are installed.")
 		return
 	buckets = bucket.load()
 	c = 0
@@ -176,7 +176,7 @@ def status(args):
 		prints.append(f"New version {vl.version} of {x} from {b.name} bucket")
 	
 	if len(prints) == 0 or c == 0:
-		print("No updates available")
+		print("No updates available.")
 		return
 	
 	print(f"{c} {"modules are" if c != 1 else "module is"} out of date:")
@@ -202,18 +202,18 @@ def create_module(args):
 	mod = module()
 	mod.name = input("Module name")
 	if not mod.name:
-		print("Error. A module must have a name.")
+		print("Error: a module must have a name.")
 		return
 	elif " " in mod.name:
-		print("Error. The name must not contain spaces")
+		print("Error: the name must not contain spaces.")
 		return
 	mod.url = input("A link to download, or a path on the local file system")
 	if not mod.url:
-		print("Error. A link to download or a path is required.")
+		print("Error: a link to download or a path is required.")
 		return
 	mod.version = input("Version")
 	if not mod.version:
-		print("Error. A module requires its version.")
+		print("Error: a module requires its version.")
 		return
 	mod.description = input("Module description, a short summary, optional")
 	mod.homepage = input("Home page to the website or repository of the module, optional")

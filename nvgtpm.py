@@ -34,7 +34,7 @@ def main():
 	update.set_defaults(func=module.handle.update_command)
 	
 	subparsers.add_parser("create", help="Create module manifests", description="Create module manifests").set_defaults(func=module.create_module)
-	subparsers.add_parser("create-ga", help="Create GitHub action for auto submition", description="Create a GitHub action to automate pull-request and update your module manifest").set_defaults(func=github_action.create)
+	subparsers.add_parser("create-ga", help="Create GitHub action for automated submition", description="Create a GitHub action to automate pull-request and update your module manifest").set_defaults(func=github_action.create)
 	cmd.cache.register(subparsers)
 	subparsers.add_parser("status", help="Check status of module updates", description="Check module updates").set_defaults(func=module.status)
 	

@@ -60,3 +60,17 @@ def download_and_extract_manifest_zip(source_url, target_bucket_dir):
 	except Exception as e:
 		print(f"Error: Failed to process zip repository download: {e}")
 		return False
+
+def parse_repo(text, strict=False):
+	"""Parses the owner/repo format.
+	Returns owner, and repo."""
+	
+	lines = text.split("/")
+	if not lines or len(lines) < 2: return None, None
+	if strict and len(lines) != 2: return None, None
+	owner, repo = lines[0], lines[1]
+	return owner, repo
+
+def is_valid_repo(text, strict=False):
+	owner, repo = parse_repo(text, strict)
+	return owner and repo

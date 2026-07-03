@@ -21,7 +21,7 @@ def search(pattern):
 def remove(args):
 	pattern = args.pattern
 	if not pattern:
-		print("Error. No pattern is given")
+		print("Error: no pattern is given.")
 		sys.exit(1)
 		return
 	totalsize = 0
@@ -37,9 +37,9 @@ def remove(args):
 		c += 1
 	
 	if c == 0:
-		print("No files to remove with this pattern")
+		print("No files to remove with this pattern.")
 		return
-	print(f"Removed {c} {"file" if c == 1 else "files"}, {helper.convert_size(totalsize)}")
+	print(f"Removed {c} {"file" if c == 1 else "files"}, {helper.convert_size(totalsize)}.")
 
 def register(p):
 	bp = p.add_parser("cache", help="Manage cache files", description="Manage cache")

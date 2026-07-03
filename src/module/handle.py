@@ -20,6 +20,10 @@ def install(module_names, requirement_file, force_update=False, force=False):
 				for line in f
 				if line.strip() and not line.startswith("#")
 			])
+	if not targets:
+		print("Error: a list of modules to install is required.")
+		sys.exit(1)
+		return
 	for mod in targets:
 		mod_name = mod
 		bucket_to_use = None
@@ -113,7 +117,7 @@ def uninstall(args):
 		shutil.rmtree(target_path)
 		print(f"Successfully removed {mod_name} from NVGT include directory.")
 	else:
-		print(f"Error: Module {mod_name} is not currently installed.")
+		print(f"Error: module {mod_name} is not currently installed.")
 
 def list(args):
 	modules = module.get_installed_modules()
@@ -146,6 +150,13 @@ def update_command(args):
 	
 	updates_to_perform = []
 	is_wildcard = "*" in args.modules
+	if not args.modules:
+		print("Error: Please specify a target module name, * or bucket update flags.")
+		return
+	elif not targets:
+		print("No modules are installed.")
+		sys.exit(1)
+		return
 	for mod in targets:
 		update_info = module._check_module_update(mod, buckets, force=args.force)
 		if update_info:
@@ -162,10 +173,6 @@ def update_command(args):
 			else:
 				print(f"Module {mod} is already up to date.")
 	
-	if not args.modules:
-		print("Error: Please specify a target module name, * or bucket update flags.")
-		return
-	
 	if is_wildcard and not updates_to_perform:
 		print("All modules are already up to date.")
 		return
@@ -177,14 +184,14 @@ def homepage(args):
 	manifest = module.load_current_info(args.name)
 	if not manifest: manifest, b = module.locate_and_load_manifest(args.name)
 	if not manifest:
-		print(f"module {args.name} not found")
+		print(f"module {args.name} not found.")
 		return
 	elif not manifest.homepage:
-		print(f"Error. Module {manifest.name or args.name} does not have ahome page URL to open")
+		print(f"Error: module {manifest.name or args.name} does not have ahome page URL to open.")
 		return
 	import webbrowser as w
 	if not w.open(manifest.homepage):
-		print(f"Error. Failed to open the home page URL of module {manifest.name or args.name}")
+		print(f"Error: failed to open the home page URL of module {manifest.name or args.name}")
 		print("---")
 		print(manifest.homepage)
 		sys.exit(1)

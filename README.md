@@ -25,6 +25,11 @@ nvgtpm bucket add <name> <source>
 
 If a bucket is present in the known buckets, you can type `nvgtpm bucket add <name>`, omitting the source.
 
+Review a list of known buckets:
+```bash
+nvgtpm bucket known
+```
+
 ## Creating a Module
 ### Introduction
 Creating a module is relatively easy. Create a git repository, or anywhere you can host your module zip file, then contribute your `<module>.json` to one of the buckets, such as main.
@@ -54,12 +59,12 @@ To update the module, edit the JSON file again with the necessary info updated l
 
 That's it!
 
-### Automating module manifest update
-You can use GitHub action to update your module. A file called `<module>.json` must be added in your repository. The file is a copy of the manifest that you have created earlier.
+### Automated module manifest update
+You can use GitHub action to automate updating your module when it changes. A file called `<module>.json` must be added in your repository. The file is a copy of the manifest that you have created earlier.
 
 Requirements:
-- You need a personal token with repos scope.
-- The personal token must be set in your repository's secret, named `PAT`.
+- You need a GitHub personal token with repos scope.
+- The personal token must be set in your repository's secret, with the named `PAT`.
 - Permission to allow actions to create pull-requests must be enabled in your repository's settings.
 
 Now, type the following command:
@@ -74,5 +79,5 @@ Asuming that the command is successful, you now have `submit.yaml` file. Copy th
 Commit and push the changes to the repository.
 
 Now, whenever you update the `<module>.json` file in your repository, the action will do the following:
-- It will create a fork of the target bucket repository on your account if it does not exist. Note: The forked repository will be named `<user>/<bucket_repo_name>`, meaning the name extracted from the bucket repository `owner/repo` format you give to the earlier interactive prompt, will be set.
+- It will create a fork of the target bucket repository on your account if it does not exist. Note: The forked repository will be named `<user>/<bucket_repo_name>`, meaning the name extracted from the bucket repository `owner/repo` format you give to the earlier interactive prompt. If you need a different name, edit the submit.yaml file.
 - It will then create a pull-request to the bucket repository.
