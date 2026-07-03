@@ -1,6 +1,7 @@
 import json
 import sys
 from src import github, paths
+from string import Template
 
 def create(args):
 	name = input("Module name that is used to construct <module>.json")
@@ -35,7 +36,7 @@ def create(args):
 		"bucket_repo": f"{bucket_owner}/{bucket_repo}",
 		"fork_repo": f"{user}/{bucket_repo}"
 	}
-	content = value.format(**d)
+	content = Template(value).safe_substitute(d)
 	if not content:
 		print(f"Failed to create content GitHub action for {name} module.")
 		sys.exit(1)
@@ -46,9 +47,9 @@ def create(args):
 
 value = """name: Auto-Submit to Community Bucket
 env:
-  bucket_repo: "{bucket_repo}"
-  fork_repo: "{fork_repo}"
-  app_name: "{app_name}"
+  bucket_repo: "$bucket_repo"
+  fork_repo: "$fork_repo"
+  app_name: "$app_name"
 on:
   push:
     branches: [main, master]
