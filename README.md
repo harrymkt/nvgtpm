@@ -3,7 +3,7 @@ A command-line package manager for [NVGT](https://nvgt.dev) modules, known as in
 
 NVGTPM tracks installed modules, resolves dependencies from bucket manifests, and syncs updates directly into NVGT's `include/` directory.
 
-Note: this repository is the main source of the package manager, not a repository to contribute modules.
+Note: this repository is the main source of the package manager, not a bucket repository to contribute modules.
 
 If you are looking forward to creating a bucket, see [bucket creation developer guide](bucket-guide.md).
 
@@ -60,11 +60,12 @@ To update the module, edit the JSON file again with the necessary info updated l
 That's it!
 
 ### Automated module manifest update
-You can use GitHub action to automate updating your module when it changes. A file called `<module>.json` must be added in your repository. The file is a copy of the manifest that you have created earlier.
+You can use GitHub action to automate updating your module when it changes. A file called `<module>.json` must be added in your repository. The file is just a copy of the manifest that you have created earlier.
 
 Requirements:
-- You need a GitHub personal token with repos scope.
-- The personal token must be set in your repository's secret, with the named `PAT`.
+- The module must be on a GitHub repository.
+- You need a [GitHub personal token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with repos scope.
+- The personal token must be set in your [repository's secrets](https://docs.github.com/en/codespaces/managing-codespaces-for-your-organization/managing-development-environment-secrets-for-your-repository-or-organization#adding-secrets-for-a-repository), with the named `PAT`.
 - Permission to allow actions to create pull-requests must be enabled in your repository's settings.
 
 Now, type the following command:

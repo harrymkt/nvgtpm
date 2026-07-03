@@ -77,7 +77,7 @@ jobs:
           TARGET_DIR=$(dirname "bucket/json/${{ env.app_name }}.json")
           mkdir -p "$TARGET_DIR"
           # Copy the file
-          cp "${{ env.app_name }}.json" "bucket/json/${{ env.app_name }}.json"
+          cp "${{ env.app_name }}.json" "$TARGET_DIR/${{ env.app_name }}.json"
       - name: Create Pull Request via Auto-Fork
         uses: peter-evans/create-pull-request@v8
         with:

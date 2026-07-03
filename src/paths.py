@@ -24,6 +24,7 @@ def get_nvgt_include_dir():
 	if not nvgt_path:
 		print("Error: Could not locate 'nvgt' executable on system PATH.")
 		sys.exit(1)
+		return None
 	return os.path.join(os.path.dirname(nvgt_path), "include")
 
 def init_environment():

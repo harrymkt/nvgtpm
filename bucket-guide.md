@@ -4,7 +4,7 @@ This guide covers creating buckets for NVGTPM. These are the structural standard
 ---
 
 ## Repository Layout
-To make a GitHub repo work as a bucket, add a `json/` folder at its root with individual module manifests:
+To make a GitHub repository work as a bucket, add a `json/` folder at its root with individual module manifests:
 ```text
 your-bucket-repo/
 	README.md
