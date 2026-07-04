@@ -7,7 +7,7 @@ on:
   push:
     branches: [main, master]
     # Triggers dynamically based on source paths
-    paths: ["modules/${{ env.app_name }}"]
+    paths: ["modules/*.json"]
   workflow_dispatch:
 
 jobs:

@@ -1,6 +1,6 @@
 {
   "version": "2026.07.05",
   "url": "https://github.com/harrymkt/nvgtpm_bucket_main/releases/download/builtin/nvgtpm.zip",
-  "description": "The official module of NVGTPM package manager",
+  "description": "The official module of NVGTPM package manager to interact with installed modules",
   "homepage": "https://github.com/harrymkt/nvgtpm"
 }
