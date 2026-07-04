@@ -44,9 +44,9 @@ jobs:
             modules/*.zip
           draft: false
           prerelease: false
-          repository: "${{ env.bucket_repo }}
+          repository: "${{ env.bucket_repo }}"
           token: ${{ secrets.PAT }}
-          tag_name: "1"
+          tag_name: "builtin"
       - name: Create Pull Request via Auto-Fork
         uses: peter-evans/create-pull-request@v8
         with:
