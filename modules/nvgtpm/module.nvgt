@@ -1,0 +1,81 @@
+namespace nvgtpm {
+	class module {
+		string name;
+		string version;
+		string url;
+		string entry;
+		string bucket;
+		string description;
+		string homepage;
+		string[] depends;
+		void reset() {
+			name = "";
+			version = "";
+			url = "";
+			entry = "";
+			bucket = "";
+			description = "";
+			homepage = "";
+			depends.resize(0);
+		}
+		module() {
+			reset();
+		}
+		module(json_object@ data) {
+			reset();
+			load(data);
+		}
+		json_object@ get_json() const property {
+			json_object obj;
+			if (version != "") obj.set("version", version);
+			if (url != "") obj.set("url", url);
+			if (entry != "") obj.set("entry", entry);
+			if (bucket != "") obj.set("bucket", bucket);
+			if (description != "") obj.set("description", description);
+			if (homepage != "") obj.set("homepage", homepage);
+			if (depends.length() > 0) {
+				json_array r;
+				for (uint i = 0; i < depends.length(); i++) r.add(depends[i]);
+				obj.set("depends", r);
+			}
+			return obj;
+		}
+		void load(json_object@ data) {
+			if (data is null) return;
+			name = data.get("name", name);
+			version = data.get("version", version);
+			url = data.get("url", url);
+			entry = data.get("entry", entry);
+			bucket = data.get("bucket", bucket);
+			description = data.get("description", description);
+			homepage = data.get("homepage", homepage);
+			depends.resize(0);
+			json_array@ arr = cast<json_array>(data.get("depends", null));
+			if (arr !is null) {
+				for (uint i = 0; i < arr.length(); i++) {
+					depends.insert_last(arr[i]);
+				}
+			}
+		}
+		string get_dir() const property {
+			if (name == "") return "";
+			return paths::include_dir + "/" + name;
+		}
+		bool get_is_local() const property {
+			if (url == "") return false;
+			return !url.starts_with("http://") && !url.starts_with("https://");
+		}
+		void save(const string &in path) {
+			file f;
+			if (!f.open(path, "w")) return;
+			f.write(json.stringify(2));
+			f.close();
+		}
+		void loads(const string &in content) {
+			if (content.length() < 2) return;
+			json_object@ j;
+			try { @j = parse_json(content); } catch { }
+			load(j);
+		}
+	}
+}

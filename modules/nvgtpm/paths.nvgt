@@ -1,0 +1,18 @@
+namespace nvgtpm::paths {
+	string get_include_dir() property {
+		string[] ps = read_environment_variable("path").replace("\\", "/").split(";");
+		if (ps.length() < 1) return "";
+		for (uint i = 0; i < ps.length(); i++) {
+			string p = ps[i].trim_whitespace();
+			if (p.ends_with("/")) p.erase(p.length() - 1);
+			if (!p.ends_with("/nvgt")) continue;
+			return p + "/include";
+		}
+		return "";
+	}
+}
+#if_not include
+	void main() {
+		alert("Include dir is", nvgtpm::paths::include_dir);
+	}
+#endif

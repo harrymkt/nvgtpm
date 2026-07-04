@@ -1,0 +1,58 @@
+name: Auto-Submit to Community Bucket
+env:
+  bucket_repo: "harrymkt/nvgtpm_bucket_main"
+  fork_repo: "harrymkt/nvgtpm_bucket_main"
+  app_name: "nvgtpm"
+on:
+  push:
+    branches: [main, master]
+    # Triggers dynamically based on source paths
+    paths: ["modules/${{ env.app_name }}"]
+  workflow_dispatch:
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Current Repo
+        uses: actions/checkout@v7
+      - name: Checkout Bucket Upstream
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ env.bucket_repo }}
+          token: ${{ secrets.PAT }}
+          path: bucket
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+      - name: Build
+        run: |
+          cd modules
+          python zip.py
+      - name: Add JSON into Bucket Directory
+        run: |
+          # Dynamically extract the directory path from the target file path
+          TARGET_DIR=$(dirname "bucket/json/${{ env.app_name }}.json")
+          mkdir -p "$TARGET_DIR"
+          # Copy the file
+          cp "modules/${{ env.app_name }}.json" "$TARGET_DIR/${{ env.app_name }}.json"
+      - name: Publish Automated Modules Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            modules/*.zip
+          draft: false
+          prerelease: false
+          repository: "${{ env.bucket_repo }}
+          token: ${{ secrets.PAT }}
+          tag_name: "1"
+      - name: Create Pull Request via Auto-Fork
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.PAT }}
+          path: bucket
+          commit-message: "Update Package Manifest of ${{ env.app_name }}"
+          title: "Update Package JSON Manifest of ${{ env.app_name }}"
+          branch: "app/${{ env.app_name }}"
+          push-to-fork: ${{ env.fork_repo }}
