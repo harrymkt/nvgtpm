@@ -55,4 +55,3 @@ jobs:
           commit-message: "Update Package Manifest of ${{ env.app_name }}"
           title: "Update Package JSON Manifest of ${{ env.app_name }}"
           branch: "app/${{ env.app_name }}"
-          push-to-fork: ${{ env.fork_repo }}
