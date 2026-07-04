@@ -5,6 +5,7 @@ import re
 import shutil
 import requests
 import zipfile
+from tqdm import tqdm
 
 def parse_github_url(url):
 	"""Safely extracts username and repository name from a standard GitHub URL."""
@@ -22,45 +23,6 @@ def parse_github_url(url):
 		return user, repo
 	return None, None
 
-def download_and_extract_manifest_zip(source_url, target_bucket_dir):
-	"""Downloads the repository source tree as a single compressed zip file stream, then unzips only the contents of the 'json/' directory directly into the bucket."""
-	user, repo = parse_github_url(source_url)
-	if not user or not repo:
-		return False
-	
-	# GitHub's clean zip snapshot endpoint for the default bucket
-	archive_url = f"https://github.com/{user}/{repo}/archive/refs/heads/main.zip"
-	try:
-		response = requests.get(archive_url, timeout=15, stream=True, allow_redirects=True, headers={"User-Agent": "NVGTPM-Package-Manager-Client"})
-		response.raise_for_status()
-		# Download the entire repository as an in-memory byte stream to prevent disk thrashing
-		zip_data = io.BytesIO(response.content)
-		# Clean out old local bucket directory structure completely to clear ghost packages
-		if os.path.exists(target_bucket_dir):
-			shutil.rmtree(target_bucket_dir)
-		os.makedirs(target_bucket_dir, exist_ok=True)
-		download_count = 0
-		with zipfile.ZipFile(zip_data) as archive:
-			for file_path in archive.namelist():
-				# GitHub zips root folders as '<repo_name>-main/json/<file_name>.json'
-				# Check for files inside the 'json/' directory ending with '.json'
-				if "/json/" in file_path and file_path.endswith(".json"):
-					file_name = os.path.basename(file_path)
-					if not file_name:
-						continue # Skip directory stubs
-					# Extract manifest content directly and format write to disk
-					raw_content = archive.read(file_path)
-					manifest_data = json.loads(raw_content.decode("utf-8"))
-					dest_file_path = os.path.join(target_bucket_dir, file_name)
-					with open(dest_file_path, "w", encoding="utf-8") as f:
-						json.dump(manifest_data, f, indent=2)
-					download_count += 1
-		print(f"Update complete. Fetched a total of {download_count} manifests.")
-		return True
-	except Exception as e:
-		print(f"Error: Failed to process zip repository download: {e}")
-		return False
-
 def parse_repo(text, strict=False):
 	"""Parses the owner/repo format.
 	Returns owner, and repo."""
@@ -74,3 +36,55 @@ def parse_repo(text, strict=False):
 def is_valid_repo(text, strict=False):
 	owner, repo = parse_repo(text, strict)
 	return owner and repo
+
+def download_and_extract_manifest_zip(source_url, target_bucket_dir):
+	"""Downloads GitHub repo zip, extracts only json/ manifests with tqdm progress."""
+	user, repo = parse_github_url(source_url)
+	if not user or not repo:
+		return False
+	archive_url = f"https://github.com/{user}/{repo}/archive/refs/heads/main.zip"
+	try:
+		response = requests.get(
+			archive_url,
+			timeout=15,
+			stream=True,
+			allow_redirects=True,
+			headers={"User-Agent": "NVGTPM-Package-Manager-Client"}
+		)
+		response.raise_for_status()
+		total_size = int(response.headers.get("content-length", 0))
+		chunk_size = 1024 * 8
+		zip_buffer = io.BytesIO()
+		with tqdm(
+			total=total_size,
+			unit="B",
+			unit_scale=True,
+			desc="Downloading bucket",
+			mininterval=0.5,
+			miniters=10
+		) as bar:
+			for chunk in response.iter_content(chunk_size=chunk_size):
+				if chunk:
+					zip_buffer.write(chunk)
+					bar.update(len(chunk))
+		zip_buffer.seek(0)
+		if os.path.exists(target_bucket_dir):
+			shutil.rmtree(target_bucket_dir)
+		os.makedirs(target_bucket_dir, exist_ok=True)
+		download_count = 0
+		with zipfile.ZipFile(zip_buffer) as archive:
+			for f in archive.namelist():
+				if "/json/" not in f or not f.endswith(".json"): continue
+				file_name = os.path.basename(f)
+				if not file_name: continue
+				raw_content = archive.read(f)
+				manifest_data = json.loads(raw_content.decode("utf-8"))
+				dest_file_path = os.path.join(target_bucket_dir, file_name)
+				with open(dest_file_path, "w", encoding="utf-8") as out:
+					json.dump(manifest_data, out, indent=2)
+				download_count += 1
+		print(f"Update complete. Fetched a total of {download_count} manifests.")
+		return True
+	except Exception as e:
+		print(f"Error: Failed to process zip repository download: {e}")
+		return False

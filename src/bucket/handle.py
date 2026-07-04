@@ -1,7 +1,6 @@
 import json
 import os
 import shutil
-import sys
 from src import bucket, paths
 
 def add(args):
@@ -13,8 +12,7 @@ def add(args):
 			source = paths.known_buckets.get(name, "")
 	if not source or source == "":
 		print(f"Error: bucket {name} does not contain a path or a link and is not in one of the known buckets.")
-		sys.exit(1)
-		return
+		return 1
 	exist = bucket.find_index(buckets, name)
 	b = bucket.bucket()
 	b.load({"name": name, "source": source})
@@ -30,6 +28,7 @@ def add(args):
 		print(f"Added local bucket tracking '{name}' -> {source}")
 	else:
 		bucket.sync_remote_bucket_manifests(name, source)
+	return 0
 
 def remove(name):
 	buckets = bucket.load()
@@ -42,41 +41,45 @@ def remove(name):
 		if os.path.exists(local_bucket_dir):
 			shutil.rmtree(local_bucket_dir)
 		print(f"Bucket {name} removed successfully.")
+		return 0
 	else:
 		print(f"Error: bucket {name} is not registered.")
+		return 1
 
 def list():
 	buckets = bucket.load()
 	if not buckets:
 		print("No active buckets registered.")
-		return
+		return 0
 	print("Active buckets:")
 	for b in sorted(buckets, key=lambda x: x.name):
 		print(f"{b.name.ljust(15)} : {b.source}")
+	return 0
 
 def known(args):
 	buckets = paths.known_buckets
 	if not buckets:
 		print("No known buckets.")
-		return
+		return 0
 	print("Known buckets:")
 	for name, source in sorted(buckets.items()):
 		print(f"{name.ljust(15)} : {source}")
+	return 0
 
 def homepage(args):
 	buckets = bucket.load()
 	b = bucket.find(buckets, args.name.lower())
 	if not b:
-		print(f"Bucket {args.name} not found.")
-		return
+		print(f"Error: bucket {args.name} not found.")
+		return 1
 	elif b.is_local:
 		print(f"Error: bucket {b.name} is a local bucket and does not have a URL to open.")
-		return
+		return 1
 	import webbrowser as w
 	if not w.open(b.source):
 		print(f"Error: failed to open the URL of bucket {b.name}")
 		print("---")
 		print(b.source)
-		sys.exit(1)
-		return
+		return 1
 	print(f"URL for {b.name} opened successfully in your browser.")
+	return 0

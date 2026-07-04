@@ -1,6 +1,6 @@
 from src import paths, helper
 from fnmatch import fnmatch
-import os, sys
+import os
 
 # Functions
 def search(pattern):
@@ -22,8 +22,7 @@ def remove(args):
 	pattern = args.pattern
 	if not pattern:
 		print("Error: no pattern is given.")
-		sys.exit(1)
-		return
+		return 1
 	totalsize = 0
 	c = 0
 	for x in search(pattern):
@@ -38,8 +37,9 @@ def remove(args):
 	
 	if c == 0:
 		print("No files to remove with this pattern.")
-		return
+		return 0
 	print(f"Removed {c} {"file" if c == 1 else "files"}, {helper.convert_size(totalsize)}.")
+	return 0
 
 def register(p):
 	bp = p.add_parser("cache", help="Manage cache", description="Manage cache files")

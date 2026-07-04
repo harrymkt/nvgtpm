@@ -7,7 +7,7 @@ nvgtpm_dir = os.path.join(user_home, "nvgtpm")
 cache_dir = os.path.join(nvgtpm_dir, "cache")
 buckets_root = os.path.join(nvgtpm_dir, "buckets")
 buckets_tracking_file = os.path.join(nvgtpm_dir, "buckets.json")
-main_bucket_url = os.environ.get("nvgtpm_main_bucket_url", "")
+main_bucket_url = os.getenv("nvgtpm_main_bucket_url", "")
 if main_bucket_url == "":
 	main_bucket_url = "https://github.com/harrymkt/nvgtpm_bucket_main"
 

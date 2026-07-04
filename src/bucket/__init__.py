@@ -37,7 +37,7 @@ class bucket:
 		try:
 			with open(p, "r") as f:
 				data = json.load(f)
-				mdl = module()
+				mdl = module.module()
 				temp_manifest = data
 				temp_manifest["name"] = module_name
 				mdl.load(temp_manifest)

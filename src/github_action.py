@@ -1,6 +1,5 @@
 import json
 import os
-import sys
 from src import github, paths
 from string import Template
 
@@ -8,30 +7,25 @@ def create(args):
 	name = input("Module name that is used to construct <module>.json")
 	if not name:
 		print("Error. Name is required.")
-		sys.exit(1)
-		return
+		return 1
 	elif " " in name:
 		print("Error. Module name must not contain spaces.")
-		sys.exit(1)
-		return
+		return 1
 	bkrepo = input("owner/repo format of the bucket repository. Leave it empty for the main bucket")
 	if not bkrepo:
 		mbko, mbkr = github.parse_github_url(paths.main_bucket_url)
 		bkrepo = f"{mbko}/{mbkr}"
 	if not bkrepo:
 		print("Error. Bucket repository cannot be determined.")
-		sys.exit(1)
-		return
+		return 1
 	bucket_owner, bucket_repo = github.parse_repo(bkrepo, True)
 	if not bucket_owner or not bucket_repo:
 		print(f"Error. Bucket owner and repository are invalid. Expected owner/repo, got \"{bkrepo}\".")
-		sys.exit(1)
-		return
+		return 1
 	user = input("Your GitHub username")
 	if not user:
 		print("Error. You need a GitHub username.")
-		sys.exit(1)
-		return
+		return 1
 	d = {
 		"app_name": name,
 		"bucket_repo": f"{bucket_owner}/{bucket_repo}",
@@ -40,12 +34,12 @@ def create(args):
 	content = Template(value).safe_substitute(d)
 	if not content:
 		print(f"Failed to create content GitHub action for {name} module.")
-		sys.exit(1)
-		return
+		return 1
 	outpath = os.path.realpath(os.path.join(os.getcwd(), args.output or "submit.yaml"))
 	with open(outpath, "w") as f:
 		f.write(content)
-		print(f"Created {os.path.basename(outpath)} in \"{outpath}\" for {name} module.")
+		print(f"Created {os.path.basename(outpath) or outpath} in \"{outpath}\" for {name} module.")
+	return 0
 
 value = """name: Auto-Submit to Community Bucket
 env:

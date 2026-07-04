@@ -1,5 +1,4 @@
 import os
-import sys
 import fnmatch
 from src import bucket, module
 
@@ -25,5 +24,6 @@ def search(args):
 				found = True
 	
 	if not found:
+		return 1
 		print(f"No modules matching '{term}' found.")
-		sys.exit(1)
+		return 0

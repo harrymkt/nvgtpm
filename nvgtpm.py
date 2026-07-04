@@ -1,3 +1,4 @@
+import sys
 import argparse
 import application as app
 from src import bucket, module, cmd, github_action
@@ -45,11 +46,13 @@ def main():
 	home.add_argument("name", help="Name of the module")
 	home.set_defaults(func=module.handle.homepage)
 	
+	e = 0
 	args = parser.parse_args()
 	if hasattr(args, "func"):
-		args.func(args)
+		e = args.func(args)
 	else:
 		parser.print_help()
+	return e
 
 if __name__ == "__main__":
-	main()
+	sys.exit(main())

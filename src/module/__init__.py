@@ -14,6 +14,7 @@ class module:
 		self.bucket = None
 		self.description = None
 		self.homepage = None
+		self.depends = None
 		if data:
 			self.load(data)
 	
@@ -32,6 +33,8 @@ class module:
 			d["description"] = self.description
 		if self.homepage:
 			d["homepage"] = self.homepage
+		if self.depends:
+			d["depends"] = self.depends
 		return d
 	
 	def load(self, data):
@@ -50,6 +53,8 @@ class module:
 				self.description = data["description"]
 			if "homepage" in data:
 				self.homepage = data["homepage"]
+			if "depends" in data:
+				self.depends = data["depends"]
 	
 	@property
 	def dir(self):
@@ -158,7 +163,7 @@ def status(args):
 	mods = get_installed_modules()
 	if len(mods) == 0:
 		print("No modules are installed.")
-		return
+		return 0
 	buckets = bucket.load()
 	c = 0
 	prints = []
@@ -177,18 +182,18 @@ def status(args):
 	
 	if len(prints) == 0 or c == 0:
 		print("No updates available.")
-		return
+		return 0
 	
 	print(f"{c} {"modules are" if c != 1 else "module is"} out of date:")
 	for x in prints:
 		print(x)
+	return 0
 
 def decl(args):
 	manifest = load_current_info(args.name)
 	if not manifest:
 		print(f"Error. Module {args.name} does not seem to have installed.")
-		sys.exit(1)
-		return
+		return 1
 	m = "main"
 	if not os.path.exists(os.path.join(manifest.dir, f"{m}.nvgt")): m = manifest.name or args.name
 	msg = f"#include \"{manifest.name or args.name}/{manifest.entry or m}.nvgt\""
@@ -196,27 +201,29 @@ def decl(args):
 	if args.copy:
 		import pyperclip as clip
 		clip.copy(msg)
-	return
+	return 0
 
 def create_module(args):
 	mod = module()
 	mod.name = input("Module name")
 	if not mod.name:
 		print("Error: a module must have a name.")
-		return
+		return 1
 	elif " " in mod.name:
 		print("Error: the name must not contain spaces.")
-		return
+		return 1
 	mod.url = input("A link to download, or a path on the local file system")
 	if not mod.url:
 		print("Error: a link to download or a path is required.")
-		return
+		return 1
 	mod.version = input("Version")
 	if not mod.version:
 		print("Error: a module requires its version.")
-		return
+		return 1
 	mod.description = input("Module description, a short summary, optional")
 	mod.homepage = input("Home page to the website or repository of the module, optional")
+	mod.depends = input("Semicolon separated list of required dependencies, optional").split(";")
 	with open(f"{mod.name}.json", "w", encoding="utf-8") as f:
 		json.dump(mod.json, f, indent=2)
 	print(f"Successfully created {mod.name}.json")
+	return 0

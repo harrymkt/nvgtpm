@@ -1,5 +1,5 @@
-import json, os, shutil
-import sys
+import json
+import os, shutil
 import requests
 import zipfile
 from src import bucket, helper, module, paths
@@ -7,8 +7,7 @@ from src import bucket, helper, module, paths
 def install(module_names, requirement_file, force_update=False, force=False):
 	if not module_names and not requirement_file:
 		print("Error: The install command requires explicit arguments inputs fields.")
-		sys.exit(1)
-		return
+		return 1
 	include_dir = paths.get_nvgt_include_dir()
 	targets = []
 	if module_names:
@@ -22,8 +21,7 @@ def install(module_names, requirement_file, force_update=False, force=False):
 			])
 	if not targets:
 		print("Error: a list of modules to install is required.")
-		sys.exit(1)
-		return
+		return 1
 	for mod in targets:
 		mod_name = mod
 		bucket_to_use = None
@@ -51,6 +49,12 @@ def install(module_names, requirement_file, force_update=False, force=False):
 		target_path = os.path.join(include_dir, mod_name)
 		zip_payload_path = None
 		installed = False
+		if manifest.depends:
+			print("Downloading required dependencies...")
+			for x in manifest.depends:
+				if x.lower() == mod_name.lower(): continue
+				if x in module.get_installed_modules(): update([x])
+				else: install([x], None)
 		if url_or_path and manifest.is_local:
 			full_local_path = os.path.normpath(url_or_path)
 			if os.path.isdir(full_local_path):
@@ -107,6 +111,9 @@ def install(module_names, requirement_file, force_update=False, force=False):
 					json.dump(manifest_data, f, indent=2)
 			except Exception as e:
 				print(f"Warning: install succeeded but failed to write manifest: {e}")
+			finally:
+				pass
+	return 0
 
 def uninstall(args):
 	module_name = args.module
@@ -116,20 +123,41 @@ def uninstall(args):
 	if os.path.exists(target_path) and os.path.isdir(target_path):
 		shutil.rmtree(target_path)
 		print(f"Successfully removed {mod_name} from NVGT include directory.")
+		return 0
 	else:
 		print(f"Error: module {mod_name} is not currently installed.")
+		return 1
 
 def list(args):
 	modules = module.get_installed_modules()
 	if not modules:
 		print("No modules are currently installed.")
-		return
+		return 0
 	print("Installed NVGT modules:")
 	print("| Name | Version | bucket name | description |")
 	print("|---|---|---|---|")
 	for mod in sorted(modules):
 		manifest = module.load_current_info(mod)
 		module.show_info(mod, manifest, manifest.bucket if manifest else "unknown")
+	return 0
+
+def homepage(args):
+	manifest, b = module.locate_and_load_manifest(args.name)
+	if not manifest: manifest = module.load_current_info(args.name)
+	if not manifest:
+		print(f"module {args.name} not found.")
+		return 1
+	elif not manifest.homepage:
+		print(f"Error: module {manifest.name or args.name} does not have ahome page URL to open.")
+		return 1
+	import webbrowser as w
+	if not w.open(manifest.homepage):
+		print(f"Error: failed to open the home page URL of module {manifest.name or args.name}")
+		print("---")
+		print(manifest.homepage)
+		return 1
+	print(f"Home page URL of {manifest.name or args.name} module opened successfully in your browser.")
+	return 0
 
 def update_command(args):
 	buckets = bucket.load()
@@ -139,26 +167,28 @@ def update_command(args):
 			if not b.is_local:
 				bucket.sync_remote_bucket_manifests(b.name, b.source)
 		if not args.modules:
-			return
-	
-	targets = []
-	if args.modules:
-		if "*" in args.modules:
-			targets = module.get_installed_modules()
-		else:
-			targets = [mod.lower() for mod in args.modules]
-	
-	updates_to_perform = []
-	is_wildcard = "*" in args.modules
+			return 0
 	if not args.modules:
 		print("Error: Please specify a target module name, * or bucket update flags.")
-		return
-	elif not targets:
+		return 1
+	return update(args.modules, args.force, buckets)
+
+def update(modules, force=False, buckets=None):
+	buckets = buckets or bucket.load()
+	targets = []
+	if modules:
+		if "*" in modules:
+			targets = module.get_installed_modules()
+		else:
+			targets = [mod.lower() for mod in modules]
+	
+	updates_to_perform = []
+	is_wildcard = "*" in modules
+	if not targets:
 		print("No modules are installed.")
-		sys.exit(1)
-		return
+		return 0
 	for mod in targets:
-		update_info = module._check_module_update(mod, buckets, force=args.force)
+		update_info = module._check_module_update(mod, buckets, force=force)
 		if update_info:
 			print(f"Updating {mod}: current version {update_info['current']}, latest version {update_info['latest']} (from {update_info['bucket']} bucket)")
 			updates_to_perform.append(mod)
@@ -175,25 +205,8 @@ def update_command(args):
 	
 	if is_wildcard and not updates_to_perform:
 		print("All modules are already up to date.")
-		return
+		return 0
 	
-	if not updates_to_perform: return
-	install(updates_to_perform, None, force_update=True, force=args.force)
-
-def homepage(args):
-	manifest = module.load_current_info(args.name)
-	if not manifest: manifest, b = module.locate_and_load_manifest(args.name)
-	if not manifest:
-		print(f"module {args.name} not found.")
-		return
-	elif not manifest.homepage:
-		print(f"Error: module {manifest.name or args.name} does not have ahome page URL to open.")
-		return
-	import webbrowser as w
-	if not w.open(manifest.homepage):
-		print(f"Error: failed to open the home page URL of module {manifest.name or args.name}")
-		print("---")
-		print(manifest.homepage)
-		sys.exit(1)
-		return
-	print(f"Home page URL of {manifest.name or args.name} module opened successfully in your browser.")
+	if not updates_to_perform: return 0
+	install(updates_to_perform, None, force_update=True, force=force)
+	return 0
