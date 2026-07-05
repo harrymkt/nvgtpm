@@ -33,7 +33,7 @@ class module:
 			d["description"] = self.description
 		if self.homepage:
 			d["homepage"] = self.homepage
-		if self.depends:
+		if self.depends and len(self.depends) != 0:
 			d["depends"] = self.depends
 		return d
 	

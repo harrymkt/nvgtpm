@@ -26,19 +26,19 @@ namespace nvgtpm {
 			load(data);
 		}
 		json_object@ get_json() const property {
-			json_object obj;
-			if (version != "") obj.set("version", version);
-			if (url != "") obj.set("url", url);
-			if (entry != "") obj.set("entry", entry);
-			if (bucket != "") obj.set("bucket", bucket);
-			if (description != "") obj.set("description", description);
-			if (homepage != "") obj.set("homepage", homepage);
+			json_object j;
+			if (version != "") j.set("version", version);
+			if (url != "") j.set("url", url);
+			if (entry != "") j.set("entry", entry);
+			if (bucket != "") j.set("bucket", bucket);
+			if (description != "") j.set("description", description);
+			if (homepage != "") j.set("homepage", homepage);
 			if (depends.length() > 0) {
 				json_array r;
 				for (uint i = 0; i < depends.length(); i++) r.add(depends[i]);
-				obj.set("depends", r);
+				j.set("depends", r);
 			}
-			return obj;
+			return j;
 		}
 		void load(json_object@ data) {
 			if (data is null) return;
@@ -77,5 +77,37 @@ namespace nvgtpm {
 			try { @j = parse_json(content); } catch { }
 			load(j);
 		}
+	}
+	json_object@ load_manifest(const string &in mod) {
+		string mp = paths::include_dir + "/" + mod;
+		if (!directory_exists(mp)) return null;
+		string ip = mp + "/info.json";
+		if (!file_exists(ip)) return null;
+		string content = file(ip, "r").read();
+		if (content.length() < 2) return null;
+		json_object@ j;
+		try { @j = parse_json(content); } catch { }
+		return j;
+	}
+	module@ load_module(const string &in mod) {
+		json_object@ j = load_manifest(mod);
+		if (@j == null) return null;
+		j.set("name", mod);
+		module m(j);
+		return m;
+	}
+	string[] get_modules_list() property {
+		return find_directories(paths::include_dir + "/*"); /**/
+	}
+	module@[] get_modules() property {
+		string[] mods = modules_list;
+		if (mods.length() < 1) return {};
+		module@[] mds;
+		for (uint i = 0; i < mods.length(); i++) {
+			module@ mod = load_module(mods[i]);
+			if (@mod == null) continue;
+			mds.insert_last(mod);
+		}
+		return mds;
 	}
 }

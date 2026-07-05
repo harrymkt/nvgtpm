@@ -19,8 +19,10 @@ def zip(start_dir, zip_path, include_root=False):
 				zf.write(abs_path, arcname)
 
 def main():
+	print("Processing files...")
 	for x in folders:
-		print(f"Zipping for folder {x}")
 		zip(x, f"{x}.zip")
+		print(f"{x}.zip created")
+
 if __name__ == "__main__":
 	sys.exit(main())
