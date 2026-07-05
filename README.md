@@ -7,6 +7,19 @@ Note: this repository is the main source of the package manager, not a bucket re
 
 If you are looking forward to creating a bucket, see [bucket creation developer guide](bucket-guide.md).
 
+## Installation
+You can install by downloading from releases page. However, if you want to install from Powershell, or Bash, use the following.
+
+### Powershell (Windows only)
+```pwsh
+irm https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install.ps1 | iex
+```
+
+### Bash (Linux and Mac OS only)
+```bash
+curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install.sh | bash
+```
+
 ## Usage
 Use `nvgtpm --help`, or `nvgtpm -h`, to view a list of commands which may contain commands that are not yet documented here. For help on a specific command, use `nvgtpm <command> --help` or just `nvgtpm <command> -h`.
 
