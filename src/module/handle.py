@@ -49,7 +49,7 @@ def install(module_names, requirement_file, force_update=False, force=False):
 		target_path = os.path.join(include_dir, mod_name)
 		zip_payload_path = None
 		installed = False
-		if manifest.depends:
+		if manifest.depends and len(manifest.depends) != 0:
 			print("Downloading required dependencies...")
 			for x in manifest.depends:
 				if x.lower() == mod_name.lower(): continue
@@ -74,7 +74,7 @@ def install(module_names, requirement_file, force_update=False, force=False):
 				head = requests.head(url_or_path, timeout=15, headers={"User-Agent": "NVGTPM-Package-Manager-Client"})
 				head.raise_for_status()
 				content_length = int(head.headers.get("Content-Length", 0))
-				size_str = helper.convert_size(content_length) if content_length > 0 else "unknown size"
+				size_str = helper.convert_size(content_length) if content_length > 0 else "size unknown"
 				print(f"Downloading release archive for {mod_name} ({size_str}) from {bucket_name} bucket...")
 			except Exception:
 				print(f"Downloading release archive for {mod_name} from {bucket_name} bucket...")
@@ -122,7 +122,7 @@ def uninstall(args):
 	target_path = os.path.join(include_dir, mod_name)
 	if os.path.exists(target_path) and os.path.isdir(target_path):
 		shutil.rmtree(target_path)
-		print(f"Successfully removed {mod_name} from NVGT include directory.")
+		print(f"Successfully uninstalled {mod_name}")
 		return 0
 	else:
 		print(f"Error: module {mod_name} is not currently installed.")
@@ -208,5 +208,4 @@ def update(modules, force=False, buckets=None):
 		return 0
 	
 	if not updates_to_perform: return 0
-	install(updates_to_perform, None, force_update=True, force=force)
-	return 0
+	return install(updates_to_perform, None, force_update=True, force=force)

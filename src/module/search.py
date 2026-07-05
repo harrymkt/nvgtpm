@@ -24,6 +24,5 @@ def search(args):
 				found = True
 	
 	if not found:
-		return 1
 		print(f"No modules matching '{term}' found.")
 		return 0

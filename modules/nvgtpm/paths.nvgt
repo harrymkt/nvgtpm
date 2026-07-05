@@ -12,7 +12,8 @@ namespace nvgtpm::paths {
 	}
 }
 #if_not include
-	void main() {
+	int main() {
 		alert("Include dir is", nvgtpm::paths::include_dir);
+		return 0;
 	}
 #endif

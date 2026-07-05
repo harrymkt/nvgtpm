@@ -14,9 +14,9 @@ def create(args):
 	bkrepo = input("owner/repo format of the bucket repository. Leave it empty for the main bucket")
 	if not bkrepo:
 		mbko, mbkr = github.parse_github_url(paths.main_bucket_url)
-		bkrepo = f"{mbko}/{mbkr}"
+		if mbko and mbkr: bkrepo = f"{mbko}/{mbkr}"
 	if not bkrepo:
-		print("Error. Bucket repository cannot be determined.")
+		print("Error. Could not determine the bucket repository.")
 		return 1
 	bucket_owner, bucket_repo = github.parse_repo(bkrepo, True)
 	if not bucket_owner or not bucket_repo:
@@ -50,14 +50,14 @@ on:
   push:
     branches: [main, master]
     # Triggers dynamically based on source path
-    paths: ["${{ env.app_name }}"]
+    paths: ["$app_name.json"]
   workflow_dispatch:
 
 jobs:
   submit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Current Repo
+      - name: Checkout Current Repository
         uses: actions/checkout@v7
       - name: Checkout Bucket Upstream
         uses: actions/checkout@v7
@@ -72,7 +72,7 @@ jobs:
           mkdir -p "$TARGET_DIR"
           # Copy the file
           cp "${{ env.app_name }}.json" "$TARGET_DIR/${{ env.app_name }}.json"
-      - name: Create Pull Request via Auto-Fork
+      - name: Create Pull Request to bucket
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.PAT }}

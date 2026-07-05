@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - name: Set up Python Environment
+      - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.x"
@@ -32,10 +32,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller
           pip install -r requirements.txt
-      - name: Package Binary Executable via PyInstaller
+      - name: Package Binary Executable
         run: |
           pyinstaller --onefile nvgtpm.py
-      - name: Upload Binary Artifact for Release Job
+      - name: Upload Binary Artifact
         uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.asset_name }}
@@ -73,7 +73,7 @@ jobs:
           mv ./downloads/linux/nvgtpm ./release/nvgtpm-linux
           chmod +x ./release/nvgtpm-macos
           chmod +x ./release/nvgtpm-linux
-      - name: Publish Automated GitHub Release
+      - name: Publish Release
         uses: softprops/action-gh-release@v3
         with:
           files: |
