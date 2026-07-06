@@ -1,7 +1,7 @@
 from . import handle
 
 def register(p):
-	bp = p.add_parser("bucket", help="Manage buckets where you get modules from", description="Manage buckets")
+	bp = p.add_parser("bucket", description="Manage buckets where you get modules from", help="Manage buckets")
 	bs = bp.add_subparsers(dest="subcommand", title="Available Commands:")
 	b_add = bs.add_parser("add", description="add an external workspace path folder or Git repository URL, as a bucket", help="Add a bucket")
 	b_add.add_argument("name", help="Bucket name")
@@ -11,7 +11,7 @@ def register(p):
 	b_rm.add_argument("name", help="Name of the bucket to remove")
 	b_rm.set_defaults(func=lambda args: handle.remove(args.name))
 	bs.add_parser("list", help="List all buckets", description="List all registered remote and local buckets").set_defaults(func=lambda args: handle.list())
-	bs.add_parser("known", help="List officially known buckets", description="List all known remote buckets").set_defaults(func=handle.known)
+	bs.add_parser("known", help="List known buckets", description="List all known remote buckets").set_defaults(func=handle.known)
 	home = bs.add_parser("home", description="Open the home page, the source, of a given bucket", help="Open the home page of a bucket")
 	home.add_argument("name", help="Name of the bucket")
 	home.set_defaults(func=handle.homepage)

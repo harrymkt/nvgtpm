@@ -1,7 +1,9 @@
 # Auto detect text files and perform LF normalization
 * text=auto eol=lf
+*.py linguist-vender=false linguist-generated=false
+*.nvgt linguist-language=AngelScript linguist-vender=false linguist-generated=false
 requirements.txt
 *.sh
 *.bat
-*.md
-.git* linguist-generated=false linguist-documentation=false
+*.md linguist-vender=false linguist-generated=false
+.git* linguist-generated=false linguist-documentation=false linguist-vender=false

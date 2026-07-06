@@ -4,7 +4,7 @@ import application as app
 from src import bucket, module, cmd, github_action
 
 def main():
-	parser = argparse.ArgumentParser(allow_abbrev=False, description=f"NVGTPM version {app.version}: A Package Manager for NVGT Modules known as include scripts")
+	parser = argparse.ArgumentParser(allow_abbrev=False, description=f"NVGTPM version {app.version}: A Package Manager for NVGT Modules")
 	subparsers = parser.add_subparsers(dest="command", title="Available commands:")
 	bucket.cmd.register(subparsers)
 	

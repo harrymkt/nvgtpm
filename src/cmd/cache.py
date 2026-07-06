@@ -44,7 +44,7 @@ def remove(args):
 def register(p):
 	bp = p.add_parser("cache", help="Manage cache", description="Manage cache files")
 	s = bp.add_subparsers(dest="subcommand", title="Available Commands:")
-	rm = s.add_parser("rm", help="Remove one or more cache files")
+	rm = s.add_parser("rm", description="Remove one or more cache files", help="Remove cache")
 	rm.add_argument("pattern", help="A pattern to remove cache")
 	rm.add_argument("-s", "--silent", help="Do not print what files are being removed", action="store_true")
 	rm.add_argument("-fp", "--fullpath", help="Read full paths", action="store_true")

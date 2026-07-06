@@ -23,6 +23,7 @@ def main():
 	for x in folders:
 		zip(x, f"{x}.zip")
 		print(f"{x}.zip created")
+	return 0
 
 if __name__ == "__main__":
 	sys.exit(main())
