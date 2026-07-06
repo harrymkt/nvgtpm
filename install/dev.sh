@@ -18,7 +18,7 @@ case "$OS" in
     OUT="nvgtpm"
     ;;
   Darwin)
-    FILE="nvgtpm-mac"
+    FILE="nvgtpm-macos"
     OUT="nvgtpm"
     ;;
   *)
