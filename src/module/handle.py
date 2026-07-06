@@ -71,7 +71,7 @@ def install(module_names, requirement_file, force_update=False, force=False):
 			if force_update and os.path.exists(zip_payload_path):
 				os.remove(zip_payload_path)
 			try:
-				head = requests.head(url_or_path, timeout=15, headers={"User-Agent": "NVGTPM-Package-Manager-Client"})
+				head = requests.head(url_or_path, timeout=15, headers={"User-Agent": "NVGTPM-Package-Manager-Client"}, allow_redirects=True)
 				head.raise_for_status()
 				content_length = int(head.headers.get("Content-Length", 0))
 				size_str = helper.convert_size(content_length) if content_length > 0 else "size unknown"

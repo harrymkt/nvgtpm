@@ -1,88 +1,25 @@
-name: Build and Release Executables Dev
+name: CI Test
 on:
   push:
     branches: ["main"]
-    paths: ["**/*.py"]
+    paths: ["install/*.*"]
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build on ${{ matrix.os }}
+  test:
+    name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
-        include:
-          - os: windows-latest
-            artifact_name: nvgtpm.exe
-            asset_name: nvgtpm.exe
-          - os: macos-latest
-            artifact_name: nvgtpm
-            asset_name: nvgtpm-macos
-          - os: ubuntu-latest
-            artifact_name: nvgtpm
-            asset_name: nvgtpm-linux
+        os: [macos-latest, ubuntu-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.x"
-      - name: Install Bundling Dependencies
+      - name: Set up NVGT
+        uses: harrymkt/setup-nvgt@v1.0.5
+      - name: Install NVGTPM
         run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller
-          pip install -r requirements.txt
-      - name: Package Binary Executable
+          curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/public.sh | bash
+      - name: Post Tests
         run: |
-          pyinstaller --onefile nvgtpm.py
-      - name: Upload Binary Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ matrix.asset_name }}
-          path: dist/${{ matrix.artifact_name }}
-          retention-days: 1
-  
-  release:
-    name: Generate GitHub Release
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v7
-      - name: Download Windows Binary
-        uses: actions/download-artifact@v8
-        with:
-          name: nvgtpm.exe
-          path: ./downloads/windows
-      - name: Download macOS Binary
-        uses: actions/download-artifact@v8
-        with:
-          name: nvgtpm-macos
-          path: ./downloads/macos
-      - name: Download Linux Binary
-        uses: actions/download-artifact@v8
-        with:
-          name: nvgtpm-linux
-          path: ./downloads/linux
-      - name: Structure Assets for Deployment
-        run: |
-          mkdir -p release
-          mv ./downloads/windows/nvgtpm.exe ./release/nvgtpm.exe
-          mv ./downloads/macos/nvgtpm ./release/nvgtpm-macos
-          mv ./downloads/linux/nvgtpm ./release/nvgtpm-linux
-          chmod +x ./release/nvgtpm-macos
-          chmod +x ./release/nvgtpm-linux
-      - name: Publish Release
-        uses: softprops/action-gh-release@v3
-        with:
-          files: |
-            release/nvgtpm.exe
-            release/nvgtpm-macos
-            release/nvgtpm-linux
-          draft: false
-          prerelease: true
-          body_path: "unreleased-changes.md"
-          tag_name: "dev"
+          nvgtpm -h
