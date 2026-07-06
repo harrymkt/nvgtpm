@@ -4,4 +4,4 @@ requirements.txt
 *.sh
 *.bat
 *.md
-.git*
+.git* linguist-generated=false linguist-documentation=false

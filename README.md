@@ -8,16 +8,28 @@ Note: this repository is the main source of the package manager, not a bucket re
 If you are looking forward to creating a bucket, see [bucket creation developer guide](bucket-guide.md).
 
 ## Installation
-You can install by downloading from releases page. However, if you want to install from Powershell, or Bash, use the following.
+You can install by downloading from [releases page](https://github.com/harrymkt/nvgtpm/releases), [latest version release](https://github.com/harrymkt/nvgtpm/releases/latest). However, if you want to install from Powershell, or Bash, use the following.
 
 ### Powershell (Windows only)
-```pwsh
-irm https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install.ps1 | iex
+Install the latest public release:
+```PowerShell
+irm https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/public.ps1 | iex
+```
+
+Or, install the development version:
+```PowerShell
+irm https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/dev.ps1 | iex
 ```
 
 ### Bash (Linux and Mac OS only)
+Install the latest public release:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/public.sh | bash
+```
+
+Or, install the development version:
+```bash
+curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/dev.sh | bash
 ```
 
 ## Usage
@@ -63,6 +75,7 @@ Note: you can also use `nvgtpm create` to create a module, which will bring up a
 | `description` | String | Brief summary of the module. | No |
 | `url` | String | Remote HTTPS zip URL, local zip path, or relative directory path. | Yes |
 | `homepage` | String | A link to the website, or the GitHub repository, of the module. | No |
+| `depends` | String array | Names of module dependencies that will be installed alongside with it. | No |
 
 ### Final Step
 - Add the created manifest JSON file to one of the buckets, usually on GitHub, such as [main](https://github.com/harrymkt/nvgtpm_bucket_main), into their json directory.

@@ -222,7 +222,14 @@ def create_module(args):
 		return 1
 	mod.description = input("Module description, a short summary, optional")
 	mod.homepage = input("Home page to the website or repository of the module, optional")
-	mod.depends = input("Semicolon separated list of required dependencies, optional").split(";")
+	depends = []
+	for x in input("Semicolon separated list of required dependencies, optional").split(";"):
+		if not x: continue
+		if " " in x:
+			print(f"Module {x} contains spaces, skipping...")
+			continue
+		depends.append(x)
+	if len(depends) != 0: mod.depends = depends
 	with open(f"{mod.name}.json", "w", encoding="utf-8") as f:
 		json.dump(mod.json, f, indent=2)
 	print(f"Successfully created {mod.name}.json")
