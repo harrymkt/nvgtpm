@@ -19,8 +19,7 @@ jobs:
         uses: harrymkt/setup-nvgt@v1.0.5
       - name: Install NVGTPM
         run: |
-          chmod +x install/dev.sh
-          ./install/dev.sh | bash
+          curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/dev.sh | bash
       - name: Post Tests
         run: |
           nvgtpm update -bks
