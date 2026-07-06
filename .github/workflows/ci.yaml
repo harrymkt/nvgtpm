@@ -19,10 +19,9 @@ jobs:
         uses: harrymkt/setup-nvgt@v1.0.5
       - name: Install NVGTPM
         run: |
-          curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/public.sh | bash
+          ./install/dev.sh | bash
       - name: Post Tests
         run: |
-          nvgtpm -h
           nvgtpm update -bks
           nvgtpm install nvgtpm
           nvgtpm list

@@ -11,7 +11,6 @@ fi
 NVGT_DIR="$(dirname "$NVGT_BIN")"
 
 OS="$(uname -s)"
-
 case "$OS" in
   Linux)
     FILE="nvgtpm-linux"
@@ -28,11 +27,8 @@ case "$OS" in
 esac
 
 URL="https://github.com/harrymkt/nvgtpm/releases/download/dev/${FILE}"
-
 curl -fL "$URL" -o "$OUT"
 
 chmod +x "$OUT" 2>/dev/null || true
-
 sudo mv "$OUT" "$NVGT_DIR/"
-
 echo "NVGTPM development version installed to $NVGT_DIR"
