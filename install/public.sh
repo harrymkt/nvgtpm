@@ -31,4 +31,5 @@ curl -fL "$URL" -o "$OUT"
 
 chmod +x "$OUT" 2>/dev/null || true
 sudo mv "$OUT" "$NVGT_DIR/"
+chmod +x "$NVGT_DIR/include"
 echo "NVGTPM installed to $NVGT_DIR"
