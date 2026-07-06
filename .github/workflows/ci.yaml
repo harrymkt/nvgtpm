@@ -26,6 +26,7 @@ jobs:
           nvgtpm install nvgtpm
           nvgtpm list
           nvgtpm search nvgtpm
-          nvgtpm cache status *
+          nvgtpm cache status "*"
+          nvgtpm status
           echo "retrieving syntax..."
           nvgtpm decl nvgtpm
