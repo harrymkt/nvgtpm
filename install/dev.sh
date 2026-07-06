@@ -33,6 +33,6 @@ curl -fL "$URL" -o "$OUT"
 
 chmod +x "$OUT" 2>/dev/null || true
 
-mv "$OUT" "$NVGT_DIR/"
+sudo mv "$OUT" "$NVGT_DIR/"
 
 echo "NVGTPM development version installed to $NVGT_DIR"
