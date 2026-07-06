@@ -79,6 +79,7 @@ namespace nvgtpm {
 		}
 	}
 	json_object@ load_manifest(const string &in mod) {
+		if (paths::include_dir == "") return null;
 		string mp = paths::include_dir + "/" + mod;
 		if (!directory_exists(mp)) return null;
 		string ip = mp + "/info.json";
@@ -97,6 +98,7 @@ namespace nvgtpm {
 		return m;
 	}
 	string[] get_modules_list() property {
+		if (paths::include_dir == "") return {};
 		return find_directories(paths::include_dir + "/*"); /**/
 	}
 	module@[] get_modules() property {

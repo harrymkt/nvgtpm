@@ -1,7 +1,6 @@
 name: Auto-Submit to Community Bucket
 env:
   bucket_repo: "harrymkt/nvgtpm_bucket_main"
-  fork_repo: "harrymkt/nvgtpm_bucket_main"
   app_name: "nvgtpm"
 on:
   push:
@@ -14,7 +13,7 @@ jobs:
   submit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Current Repo
+      - name: Checkout Current Repository
         uses: actions/checkout@v7
       - name: Checkout Bucket Upstream
         uses: actions/checkout@v7
@@ -47,7 +46,7 @@ jobs:
           repository: "${{ env.bucket_repo }}"
           token: ${{ secrets.PAT }}
           tag_name: "builtin"
-      - name: Create Pull Request via Auto-Fork
+      - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.PAT }}

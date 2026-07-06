@@ -1,6 +1,10 @@
 namespace nvgtpm::paths {
 	string get_include_dir() property {
-		string[] ps = read_environment_variable("path").replace("\\", "/").split(";");
+		string path;
+		if (system_is_unix) path = expand_environment_variables("$PATH").replace(":", "\n");
+		else path = read_environment_variable("path").replace(";", "\n");
+		path.replace_this("\\", "/");
+		string[] ps = path.split("\n");
 		if (ps.length() < 1) return "";
 		for (uint i = 0; i < ps.length(); i++) {
 			string p = ps[i].trim_whitespace();
