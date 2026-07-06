@@ -7,3 +7,4 @@ requirements.txt
 *.bat
 *.md linguist-vender=false linguist-generated=false
 .git* linguist-generated=false linguist-documentation=false linguist-vender=false
+*.yaml linguist-generated=false linguist-documentation=false linguist-vender=false

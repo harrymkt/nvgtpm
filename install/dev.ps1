@@ -15,7 +15,7 @@ $file = "nvgtpm.exe"
 $url = "https://github.com/harrymkt/nvgtpm/releases/download/dev/$file"
 
 # Download
-Write-Output "Downloading..."
+Write-Output "Downloading NVGTPM..."
 $oldProgressPreference = $ProgressPreference
 $ProgressPreference = 'SilentlyContinue'
 Invoke-WebRequest -Uri $url -OutFile $file
