@@ -25,3 +25,6 @@ SOFTWARE.
 */
 #include "module.nvgt"
 #include "paths.nvgt"
+namespace nvgtpm {
+	bool can_use = !SCRIPT_COMPILED;
+}

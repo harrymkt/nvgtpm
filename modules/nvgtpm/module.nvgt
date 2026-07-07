@@ -41,7 +41,7 @@ namespace nvgtpm {
 			return j;
 		}
 		void load(json_object@ data) {
-			if (data is null) return;
+			if (@data == null) return;
 			name = data.get("name", name);
 			version = data.get("version", version);
 			url = data.get("url", url);

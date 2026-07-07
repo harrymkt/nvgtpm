@@ -10,7 +10,7 @@ If you are looking forward to creating a bucket, see [bucket creation developer 
 ## Installation
 You can install by downloading from [releases page](https://github.com/harrymkt/nvgtpm/releases), [latest version release](https://github.com/harrymkt/nvgtpm/releases/latest). However, if you want to install from Powershell, or Bash, use the following.
 
-### Powershell (Windows only)
+### PowerShell (Windows only)
 Install the latest public release:
 ```PowerShell
 irm https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/public.ps1 | iex
