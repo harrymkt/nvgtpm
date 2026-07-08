@@ -21,12 +21,15 @@ jobs:
         run: |
           curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/dev.sh | bash
       - name: Post Tests
+        shell: bash
         run: |
+          nvgtpm about
           nvgtpm update -bks
-          nvgtpm install nvgtpm
+          nvgtpm install nvgtpm form
           nvgtpm list
           nvgtpm search nvgtpm
           nvgtpm cache status "*"
           nvgtpm status
           echo "retrieving syntax..."
           nvgtpm decl nvgtpm
+          nvgtpm cache rm "*"

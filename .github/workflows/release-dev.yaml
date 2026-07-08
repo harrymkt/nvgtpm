@@ -2,7 +2,9 @@ name: Build and Release Executables Dev
 on:
   push:
     branches: ["main"]
-    paths: ["**/*.py"]
+    paths:
+      - "**/*.py"
+      - "!install/**.py"
   workflow_dispatch:
 
 jobs:

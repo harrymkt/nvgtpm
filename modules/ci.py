@@ -25,7 +25,6 @@ def zip(start_dir, zip_path, include_root=False):
 def set_output(key, value):
 	o = os.getenv("GITHUB_OUTPUT")
 	if not o:
-		print("Warning: GitHub output cannot set")
 		return
 	with open(o, "a") as f:
 		if "\n" in value:
@@ -35,7 +34,7 @@ def set_output(key, value):
 
 def main():
 	print("Processing files...")
-	commit = "### Module Manifests\nThe following modules are available\n\n"
+	pr = "### Module Manifests\nThe following modules are available\n\n"
 	for x in folders:
 		zip(x, f"{x}.zip")
 		print(f"{x}.zip created")
@@ -47,9 +46,9 @@ def main():
 		if "description" in d: cm += f"{d["description"]}\n"
 		cm += f"- Version: {d.get("version", "unknown")}\n- Download URL: {d["url"]}\n"
 		if "homepage" in d: cm += f"- Home page URL: {d["homepage"]}"
-		commit += f"{cm.strip()}\n\n"
-	commit = commit.strip()
-	set_output("pr_body", commit)
+		pr += f"{cm.strip()}\n\n"
+	pr = pr.strip()
+	set_output("pr_body", pr)
 	return 0
 
 if __name__ == "__main__":
