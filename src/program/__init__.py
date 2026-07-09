@@ -50,7 +50,10 @@ def update_cmd(args):
 		current_exe = sys.executable
 		print("Applying update...")
 		if system == "windows":
-			os.rename(tmp_path, current_exe)
+			old_exe = f"{current_exe}.old"
+			os.replace(current_exe, old_exe)
+			os.replace(tmp_path, current_exe)
+			os.replace(old_exe, tmp_path)
 		else:
 			os.chmod(tmp_path, os.stat(tmp_path).st_mode | stat.S_IEXEC)
 			shutil.move(tmp_path, current_exe)
