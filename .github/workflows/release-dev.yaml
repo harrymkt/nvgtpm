@@ -4,7 +4,7 @@ on:
     branches: ["main"]
     paths:
       - "**/*.py"
-      - "!install/**.py"
+      - "!install/**/*.py"
   workflow_dispatch:
 
 jobs:
