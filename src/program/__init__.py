@@ -53,15 +53,25 @@ def update_cmd(args):
 			old_exe = f"{current_exe}.old"
 			os.replace(current_exe, old_exe)
 			os.replace(tmp_path, current_exe)
-			os.replace(old_exe, tmp_path)
+			os.execv(current_exe, "[applyupdatesilently]")
 		else:
 			os.chmod(tmp_path, os.stat(tmp_path).st_mode | stat.S_IEXEC)
 			shutil.move(tmp_path, current_exe)
-		print("Update complete.")
+			print("Update complete.")
 		return 0
 	except Exception as e:
 		print(f"Update failed: {e}")
 		return 1
+
+def applyupdate():
+	# 0=exit, 1=continue
+	exe = f"{sys.executable}.old"
+	if not os.path.exists(exe): return 1 # No old executable to remove
+	import time
+	time.sleep(1)
+	os.remove(exe)
+	print("Update complete.")
+	return 0
 
 def about(args=None):
 	print(f"NVGTPM{" development" if app.dev else ""} version {app.version} ({app.build})")

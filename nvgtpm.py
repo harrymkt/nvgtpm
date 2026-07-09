@@ -58,4 +58,6 @@ def main():
 	return e
 
 if __name__ == "__main__":
+	if "[applyupdatesilently]" in sys.argv:
+		if program.applyupdate() == 0: sys.exit()
 	sys.exit(main())
