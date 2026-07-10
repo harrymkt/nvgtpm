@@ -8,7 +8,9 @@ Note: this repository is the main source of the package manager, not a bucket re
 If you are looking forward to creating a bucket, see [bucket creation developer guide](bucket-guide.md).
 
 ## Installation
-You can install by downloading from [releases page](https://github.com/harrymkt/nvgtpm/releases), [latest version release](https://github.com/harrymkt/nvgtpm/releases/latest). However, if you want to install from Powershell, or Bash, use the following.
+You can install by downloading from [releases page](https://github.com/harrymkt/nvgtpm/releases), [latest version release](https://github.com/harrymkt/nvgtpm/releases/latest), or [development version release](https://github.com/harrymkt/nvgtpm/releases/tags/dev).
+
+However, if you want to install from Powershell, or Bash, use the following.
 
 ### PowerShell (Windows only)
 Install the latest public release:

@@ -49,7 +49,7 @@ env:
 on:
   push:
     branches: [main, master]
-    # Triggers dynamically based on source path
+    # Triggers dynamically based on source paths
     paths: ["$app_name.json"]
   workflow_dispatch:
 

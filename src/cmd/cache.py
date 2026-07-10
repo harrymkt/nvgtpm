@@ -52,6 +52,8 @@ def status(args):
 		f = x["name"]
 		fn = x["path"]
 		size = x["size"]
+		if args.verbose:
+			print(f"{f}, {helper.convert_size(size)}")
 		totalsize += size
 		c += 1
 	
@@ -71,4 +73,5 @@ def register(p):
 	rm.set_defaults(func=remove)
 	st = s.add_parser("status", description="Show cache files under a given pattern", help="Show cache")
 	st.add_argument("pattern", help="A pattern to check against")
+	st.add_argument("-v", "--verbose", help="Show each file", action="store_true")
 	st.set_defaults(func=status)

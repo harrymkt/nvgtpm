@@ -33,7 +33,7 @@ def set_output(key, value):
 			f.write(f"{key}={value}")
 
 def main():
-	print("Processing files...")
+	print("Processing CI...")
 	pr = "### Module Manifests\nThe following modules are available\n\n"
 	for x in folders:
 		zip(x, f"{x}.zip")
@@ -41,7 +41,9 @@ def main():
 		d = None
 		with open(f"{x}.json", "r") as f:
 			d = json.load(f)
-		if not d: continue
+		if not d:
+			print(f"Warning: JSON file for {x} module could not be loaded.")
+			continue
 		cm = f"#### {d.get("name", x) or x}\n"
 		if "description" in d: cm += f"{d["description"]}\n"
 		cm += f"- Version: {d.get("version", "unknown")}\n- Download URL: {d["url"]}\n"

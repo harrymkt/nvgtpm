@@ -23,7 +23,7 @@ jobs:
       - name: Post Tests
         shell: bash
         run: |
-          nvgtpm about
+          nvgtpm program about
           nvgtpm update -bks
           nvgtpm install nvgtpm form
           nvgtpm list

@@ -88,3 +88,4 @@ jobs:
           prerelease: true
           body_path: "unreleased-changes.md"
           tag_name: "dev"
+          commitish: ${{ github.sha }}
