@@ -4,3 +4,4 @@
 - Added a new command called `program` to interact with NVGTPM program itself.
 - Added `about` command in `program` command to view program information.
 - Added updater. Use the command `program update`. Add `-f` or `--force` to force the update, and `-d` or `--dev` to install the development version.
+- Improved help formatting.

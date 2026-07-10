@@ -1,6 +1,7 @@
 from . import cmd
 import sys
 import os
+import time
 import platform
 import tempfile
 import shutil
@@ -10,7 +11,7 @@ import application as app
 
 def update_cmd(args):
 	if "python.exe" in sys.executable:
-		print("Error: this command cannot be used if running from source")
+		print("Error: this command cannot be used when running from source")
 		return 1
 	try:
 		print("Checking latest release...")
@@ -53,7 +54,7 @@ def update_cmd(args):
 			old_exe = f"{current_exe}.old"
 			os.replace(current_exe, old_exe)
 			os.replace(tmp_path, current_exe)
-			os.execv(current_exe, ["[applyupdatesilently]"])
+			os.execv(current_exe, [current_exe, "[applyupdatesilently]"])
 		else:
 			os.chmod(tmp_path, os.stat(tmp_path).st_mode | stat.S_IEXEC)
 			shutil.move(tmp_path, current_exe)
@@ -67,7 +68,6 @@ def applyupdate():
 	# 0=exit, 1=continue
 	exe = f"{sys.executable}.old"
 	if not os.path.exists(exe): return 1 # No old executable to remove
-	import time
 	time.sleep(1)
 	os.remove(exe)
 	print("Update complete.")

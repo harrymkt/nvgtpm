@@ -63,7 +63,7 @@ def status(args):
 
 def register(p):
 	bp = p.add_parser("cache", help="Manage cache", description="Manage cache files")
-	s = bp.add_subparsers(dest="subcommand", title="Available Commands")
+	s = bp.add_subparsers(dest="subcommand", title="Available Commands", metavar="<cmd>")
 	rm = s.add_parser("rm", description="Remove one or more cache files", help="Remove cache")
 	rm.add_argument("pattern", help="A pattern to remove cache")
 	rm.add_argument("-s", "--silent", help="Do not print what files are being removed", action="store_true")
