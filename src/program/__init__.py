@@ -64,15 +64,6 @@ def update_cmd(args):
 		print(f"Update failed: {e}")
 		return 1
 
-def applyupdate():
-	# 0=exit, 1=continue
-	exe = f"{sys.executable}.old"
-	if not os.path.exists(exe): return 1 # No old executable to remove
-	time.sleep(1)
-	os.remove(exe)
-	print("Update complete.")
-	return 0
-
 def about(args=None):
 	print(f"NVGTPM{" development" if app.dev else ""} version {app.version} ({app.build})")
 	return 0
