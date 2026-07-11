@@ -8,6 +8,7 @@ import shutil
 import stat
 import requests
 import application as app
+import subprocess
 
 def update_cmd(args):
 	if "python.exe" in sys.executable:
@@ -54,7 +55,7 @@ def update_cmd(args):
 			old_exe = f"{current_exe}.old"
 			os.replace(current_exe, old_exe)
 			os.replace(tmp_path, current_exe)
-			os.execv(current_exe, [current_exe, "[applyupdatesilently]"])
+			subprocess.popen([current_exe, "[applyupdatesilently]"])
 		else:
 			os.chmod(tmp_path, os.stat(tmp_path).st_mode | stat.S_IEXEC)
 			shutil.move(tmp_path, current_exe)

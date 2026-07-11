@@ -1,9 +1,7 @@
 import os
 import sys
-import argparse
-import application as app
-from src import bucket, module, cmd, github_action, program
 
+# Updater
 def applyupdate():
 	# 0=exit, 1=continue
 	exe = f"{sys.executable}.old"
@@ -13,6 +11,13 @@ def applyupdate():
 	os.remove(exe)
 	print("Update complete.")
 	return 0
+
+if "[applyupdatesilently]" in sys.argv:
+	if applyupdate() == 0: sys.exit()
+
+import argparse
+import application as app
+from src import bucket, module, cmd, github_action, program
 
 def main():
 	parser = argparse.ArgumentParser(allow_abbrev=False, description=f"NVGTPM version {app.version}: A Package Manager for NVGT Modules")
@@ -67,6 +72,4 @@ def main():
 	return e
 
 if __name__ == "__main__":
-	if "[applyupdatesilently]" in sys.argv:
-		if applyupdate() == 0: sys.exit()
 	sys.exit(main())
