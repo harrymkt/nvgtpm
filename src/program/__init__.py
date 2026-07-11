@@ -55,7 +55,7 @@ def update_cmd(args):
 			old_exe = f"{current_exe}.old"
 			os.replace(current_exe, old_exe)
 			os.replace(tmp_path, current_exe)
-			subprocess.popen([current_exe, "[applyupdatesilently]"])
+			subprocess.Popen([current_exe, "[applyupdatesilently]"])
 		else:
 			os.chmod(tmp_path, os.stat(tmp_path).st_mode | stat.S_IEXEC)
 			shutil.move(tmp_path, current_exe)
