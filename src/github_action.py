@@ -13,7 +13,7 @@ def create(args):
 		return 1
 	bkrepo = input("owner/repo format of the bucket repository. Leave it empty for the main bucket")
 	if not bkrepo:
-		mbko, mbkr = github.parse_github_url(paths.main_bucket_url)
+		mbko, mbkr = github.parse_github_url(paths.MAIN_BUCKET_URL)
 		if mbko and mbkr: bkrepo = f"{mbko}/{mbkr}"
 	if not bkrepo:
 		print("Error. Could not determine the bucket repository.")

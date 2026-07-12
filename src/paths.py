@@ -2,20 +2,20 @@ import os
 import shutil
 import sys
 
-user_home = os.path.expanduser("~")
-nvgtpm_dir = os.path.join(user_home, "nvgtpm")
-cache_dir = os.path.join(nvgtpm_dir, "cache")
-buckets_root = os.path.join(nvgtpm_dir, "buckets")
-buckets_tracking_file = os.path.join(nvgtpm_dir, "buckets.json")
-main_bucket_url = os.getenv("nvgtpm_main_bucket_url", "")
-if main_bucket_url == "":
-	main_bucket_url = "https://github.com/harrymkt/nvgtpm_bucket_main"
+USER_HOME = os.path.expanduser("~")
+NVGTPM_DIR = os.path.join(USER_HOME, "nvgtpm")
+CACHE_DIR = os.path.join(NVGTPM_DIR, "cache")
+BUCKETS_ROOT = os.path.join(NVGTPM_DIR, "buckets")
+BUCKETS_TRACKING_FILE = os.path.join(NVGTPM_DIR, "buckets.json")
+MAIN_BUCKET_URL = os.getenv("nvgtpm_main_bucket_url", "")
+if MAIN_BUCKET_URL == "":
+	MAIN_BUCKET_URL = "https://github.com/harrymkt/nvgtpm_bucket_main"
 
-known_buckets = {
-	"main": main_bucket_url
+KNOWN_BUCKETS = {
+	"main": MAIN_BUCKET_URL
 }
-default_buckets = {
-	"main": main_bucket_url
+DEFAULT_BUCKETS = {
+	"main": MAIN_BUCKET_URL
 }
 
 def get_nvgt_include_dir():
@@ -29,16 +29,16 @@ def get_nvgt_include_dir():
 
 def init_environment():
 	"""Initializes the environment of necessary verifications."""
-	os.makedirs(cache_dir, exist_ok=True)
-	os.makedirs(buckets_root, exist_ok=True)
+	os.makedirs(CACHE_DIR, exist_ok=True)
+	os.makedirs(BUCKETS_ROOT, exist_ok=True)
 	import json
 	cbuckets = {}
 	try:
-		with open(buckets_tracking_file, "r") as f:
+		with open(BUCKETS_TRACKING_FILE, "r") as f:
 			cbuckets = json.load(f)
 	except:
 		pass
 	
-	if not os.path.exists(buckets_tracking_file) or not cbuckets or len(cbuckets) == 0:
-		with open(buckets_tracking_file, "w") as f:
-			json.dump(default_buckets, f, indent=2)
+	if not os.path.exists(BUCKETS_TRACKING_FILE) or not cbuckets or len(cbuckets) == 0:
+		with open(BUCKETS_TRACKING_FILE, "w") as f:
+			json.dump(DEFAULT_BUCKETS, f, indent=2)

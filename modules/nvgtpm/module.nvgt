@@ -59,7 +59,7 @@ namespace nvgtpm {
 		}
 		string get_dir() const property {
 			if (name == "") return "";
-			return paths::include_dir + "/" + name;
+			return paths::INCLUDE_DIR + "/" + name;
 		}
 		bool get_is_local() const property {
 			if (url == "") return false;
@@ -79,8 +79,8 @@ namespace nvgtpm {
 		}
 	}
 	json_object@ load_manifest(const string &in mod) {
-		if (paths::include_dir == "") return null;
-		string mp = paths::include_dir + "/" + mod;
+		if (paths::INCLUDE_DIR == "") return null;
+		string mp = paths::INCLUDE_DIR + "/" + mod;
 		if (!directory_exists(mp)) return null;
 		string ip = mp + "/info.json";
 		if (!file_exists(ip)) return null;
@@ -98,8 +98,8 @@ namespace nvgtpm {
 		return m;
 	}
 	string[] get_modules_list() property {
-		if (paths::include_dir == "") return {};
-		return find_directories(paths::include_dir + "/*"); /**/
+		if (paths::INCLUDE_DIR == "") return {};
+		return find_directories(paths::INCLUDE_DIR + "/*"); /**/
 	}
 	module@[] get_modules() property {
 		string[] mods = modules_list;

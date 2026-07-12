@@ -8,8 +8,8 @@ def add(args):
 	name = args.name.lower()
 	source = args.source
 	if not source or source == "":
-		if name in paths.known_buckets:
-			source = paths.known_buckets.get(name, "")
+		if name in paths.KNOWN_BUCKETS:
+			source = paths.KNOWN_BUCKETS.get(name, "")
 	if not source or source == "":
 		print(f"Error: bucket {name} does not contain a path or a link and is not in one of the known buckets.")
 		return 1
@@ -37,7 +37,7 @@ def remove(name):
 	if idx >= 0:
 		del buckets[idx]
 		bucket.save(buckets)
-		local_bucket_dir = os.path.join(paths.buckets_root, name)
+		local_bucket_dir = os.path.join(paths.BUCKETS_ROOT, name)
 		if os.path.exists(local_bucket_dir):
 			shutil.rmtree(local_bucket_dir)
 		print(f"Bucket {name} removed successfully.")
@@ -57,7 +57,7 @@ def list():
 	return 0
 
 def known(args):
-	buckets = paths.known_buckets
+	buckets = paths.KNOWN_BUCKETS
 	if not buckets:
 		print("No known buckets.")
 		return 0

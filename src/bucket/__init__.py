@@ -19,7 +19,7 @@ class Bucket:
 	def dir(self):
 		if self.is_local:
 			return self.source
-		return os.path.join(paths.buckets_root, self.name)
+		return os.path.join(paths.BUCKETS_ROOT, self.name)
 	
 	@property
 	def is_local(self):
@@ -66,7 +66,7 @@ def load():
 	paths.init_environment()
 	buckets = []
 	try:
-		with open(paths.buckets_tracking_file, "r") as f:
+		with open(paths.BUCKETS_TRACKING_FILE, "r") as f:
 			data = json.load(f)
 			for name, source in data.items():
 				b = Bucket()
@@ -75,14 +75,14 @@ def load():
 	except:
 		pass
 	if len(buckets) == 0:
-		for name, source in paths.default_buckets.items():
+		for name, source in paths.DEFAULT_BUCKETS.items():
 			b = Bucket()
 			b.load({"name": name, "source": source})
 			buckets.append(b)
 	return buckets
 
 def save(buckets):
-	with open(paths.buckets_tracking_file, "w") as f:
+	with open(paths.BUCKETS_TRACKING_FILE, "w") as f:
 		json.dump({b.name: b.source for b in buckets}, f, indent=2)
 
 def find_index(buckets, name):
@@ -98,7 +98,7 @@ def find(buckets, name):
 	return buckets[x]
 
 def sync_remote_bucket_manifests(bucket_name, source_url):
-	bucket_dir = os.path.join(paths.buckets_root, bucket_name)
+	bucket_dir = os.path.join(paths.BUCKETS_ROOT, bucket_name)
 	print(f"Updating bucket {bucket_name}...")
 	from src import github
 	github.download_and_extract_manifest_zip(source_url, bucket_dir)

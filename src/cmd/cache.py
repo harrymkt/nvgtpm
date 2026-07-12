@@ -6,8 +6,8 @@ from src import paths, helper
 def search(pattern):
 	if not pattern: return None
 	result = []
-	for f in os.listdir(paths.cache_dir):
-		fn = os.path.join(paths.cache_dir, f)
+	for f in os.listdir(paths.CACHE_DIR):
+		fn = os.path.join(paths.CACHE_DIR, f)
 		if not os.path.exists(fn): continue
 		if not fnmatch(f, pattern): continue
 		d = {

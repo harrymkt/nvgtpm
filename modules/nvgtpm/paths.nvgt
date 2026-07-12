@@ -1,5 +1,5 @@
 namespace nvgtpm::paths {
-	string get_include_dir() property {
+	string get_INCLUDE_DIR() property {
 		string path;
 		if (system_is_unix) path = expand_environment_variables("$PATH").replace(":", "\n");
 		else path = read_environment_variable("path").replace(";", "\n");
@@ -17,7 +17,7 @@ namespace nvgtpm::paths {
 }
 #if_not include
 	int main() {
-		alert("Include dir is", nvgtpm::paths::include_dir);
+		alert("Include dir is", nvgtpm::paths::INCLUDE_DIR);
 		return 0;
 	}
 #endif

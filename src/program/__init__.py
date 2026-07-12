@@ -21,7 +21,7 @@ def update_cmd(args):
 		resp.raise_for_status()
 		data = resp.json()
 		latest_version = data.get("tag_name")
-		if not args.force and not latest_version == "dev" and latest_version == app.version:
+		if not args.force and not latest_version == "dev" and latest_version == app.VERSION:
 			print("Already up to date.")
 			return 0
 		system = platform.system().lower()
@@ -66,6 +66,6 @@ def update_cmd(args):
 		return 1
 
 def about(args=None):
-	print(f"NVGTPM{" development" if app.dev else ""} version {app.version} ({app.build})")
+	print(f"NVGTPM{" development" if app.DEV else ""} version {app.VERSION} ({app.BUILD})")
 	return 0
 

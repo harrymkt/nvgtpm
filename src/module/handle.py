@@ -67,7 +67,7 @@ def install(module_names, requirement_file, force_update=False, force=False):
 				zip_payload_path = full_local_path
 		else:
 			zip_filename = f"{mod_name}-{mod_version}.zip"
-			zip_payload_path = os.path.join(paths.cache_dir, zip_filename)
+			zip_payload_path = os.path.join(paths.CACHE_DIR, zip_filename)
 			if force_update and os.path.exists(zip_payload_path):
 				os.remove(zip_payload_path)
 			try:

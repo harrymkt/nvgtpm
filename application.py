@@ -1,3 +1,3 @@
-build = "2026.07.10"
-version = "0.0.5"
-dev = True
+BUILD = "2026.07.10"
+VERSION = "0.0.5"
+DEV = True
