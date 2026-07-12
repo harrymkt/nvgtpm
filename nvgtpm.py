@@ -1,20 +1,5 @@
 import os
 import sys
-
-# Updater
-def applyupdate():
-	# 0=exit, 1=continue
-	exe = f"{sys.executable}.old"
-	if not os.path.exists(exe): return 1 # No old executable to remove
-	import time
-	time.sleep(1)
-	os.remove(exe)
-	print("Update complete.")
-	return 0
-
-if "[applyupdatesilently]" in sys.argv:
-	if applyupdate() == 0: sys.exit()
-
 import argparse
 import application as app
 from src import bucket, module, cmd, github_action, program

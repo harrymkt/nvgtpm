@@ -1,6 +1,5 @@
 import sys
 import os
-import time
 import platform
 import tempfile
 import shutil
@@ -9,6 +8,10 @@ import subprocess
 import requests
 import application as app
 from . import cmd
+
+def about(args=None):
+	print(f"NVGTPM{" development" if app.DEV else ""} version {app.VERSION} ({app.BUILD})")
+	return 0
 
 def update_cmd(args):
 	if "python.exe" in sys.executable:
@@ -52,10 +55,25 @@ def update_cmd(args):
 		current_exe = sys.executable
 		print("Applying update...")
 		if system == "windows":
-			old_exe = f"{current_exe}.old"
-			os.replace(current_exe, old_exe)
-			os.replace(tmp_path, current_exe)
-			subprocess.Popen([current_exe, "[applyupdatesilently]"])
+			bat_path = tempfile.mktemp(suffix=".bat")
+			with open(bat_path, "w", encoding="utf-8") as bat:
+				bat.write(f"""@echo off
+:wait
+del "{current_exe}" >nul 2>&1
+if exist "{current_exe}" (
+	timeout /t 1 /nobreak >nul
+	goto wait
+)
+move "{tmp_path}" "{current_exe}"
+start "" "{current_exe}"
+del "%~f0"
+echo Update complete.
+""")
+			subprocess.Popen(
+				["cmd", "/c", bat_path],
+				close_fds=True,
+				creationflags=subprocess.CREATE_NO_WINDOW
+			)
 		else:
 			os.chmod(tmp_path, os.stat(tmp_path).st_mode | stat.S_IEXEC)
 			shutil.move(tmp_path, current_exe)
@@ -64,8 +82,3 @@ def update_cmd(args):
 	except Exception as e:
 		print(f"Update failed: {e}")
 		return 1
-
-def about(args=None):
-	print(f"NVGTPM{" development" if app.DEV else ""} version {app.VERSION} ({app.BUILD})")
-	return 0
-
