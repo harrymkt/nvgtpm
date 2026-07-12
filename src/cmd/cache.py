@@ -1,6 +1,6 @@
-from src import paths, helper
 from fnmatch import fnmatch
 import os
+from src import paths, helper
 
 # Functions
 def search(pattern):

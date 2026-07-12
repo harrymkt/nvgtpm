@@ -1,4 +1,4 @@
-class version:
+class Version:
 	"""A class to compare version"""
 	def __init__(self, input_str: str):
 		"""Initializes the class with a given version, parsing as it is necessary."""
@@ -16,7 +16,7 @@ class version:
 	def __len__(self) -> int:
 		return len(self._vers)
 	
-	def _compare(self, other: "version") -> int:
+	def _compare(self, other: "Version") -> int:
 		"""Compare against another version instance.
 		Returns a positive value if the current version is greater than the other. Returns a negative value if the current is less than the other. Otherwise, returns 0."""
 		
@@ -33,13 +33,13 @@ class version:
 				return -1
 		return 0
 	
-	def __eq__(self, other: "version") -> bool:
+	def __eq__(self, other: "Version") -> bool:
 		return self._compare(other) == 0
 	
-	def __lt__(self, other: "version") -> bool:
+	def __lt__(self, other: "Version") -> bool:
 		return self._compare(other) == -1
 	
-	def __gt__(self, other: "version") -> bool:
+	def __gt__(self, other: "Version") -> bool:
 		return self._compare(other) == 1
 	
 	@property

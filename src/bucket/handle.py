@@ -14,7 +14,7 @@ def add(args):
 		print(f"Error: bucket {name} does not contain a path or a link and is not in one of the known buckets.")
 		return 1
 	exist = bucket.find_index(buckets, name)
-	b = bucket.bucket()
+	b = bucket.Bucket()
 	b.load({"name": name, "source": source})
 	if exist > -1:
 		buckets[exist] = b

@@ -1,4 +1,3 @@
-from . import cmd
 import sys
 import os
 import time
@@ -6,9 +5,10 @@ import platform
 import tempfile
 import shutil
 import stat
+import subprocess
 import requests
 import application as app
-import subprocess
+from . import cmd
 
 def update_cmd(args):
 	if "python.exe" in sys.executable:

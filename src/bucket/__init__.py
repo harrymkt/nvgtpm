@@ -3,7 +3,7 @@ import os
 from src import paths
 from . import cmd
 
-class bucket:
+class Bucket:
 	def __init__(self):
 		self.name = None
 		self.source = None
@@ -37,7 +37,7 @@ class bucket:
 		try:
 			with open(p, "r") as f:
 				data = json.load(f)
-				mdl = module.module()
+				mdl = module.Module()
 				temp_manifest = data
 				temp_manifest["name"] = module_name
 				mdl.load(temp_manifest)
@@ -69,14 +69,14 @@ def load():
 		with open(paths.buckets_tracking_file, "r") as f:
 			data = json.load(f)
 			for name, source in data.items():
-				b = bucket()
+				b = Bucket()
 				b.load({"name": name, "source": source})
 				buckets.append(b)
 	except:
 		pass
 	if len(buckets) == 0:
 		for name, source in paths.default_buckets.items():
-			b = bucket()
+			b = Bucket()
 			b.load({"name": name, "source": source})
 			buckets.append(b)
 	return buckets

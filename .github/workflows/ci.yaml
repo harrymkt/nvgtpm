@@ -7,21 +7,16 @@ on:
 
 jobs:
   test:
-    name: Test on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    name: Test
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
       - name: Set up NVGT
-        uses: harrymkt/setup-nvgt@v1.0.5
+        uses: harrymkt/setup-nvgt@v1.0.6
       - name: Install NVGTPM
         run: |
           curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/dev.sh | bash
       - name: Post Tests
-        shell: bash
         run: |
           nvgtpm program about
           nvgtpm update -bks

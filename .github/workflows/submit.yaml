@@ -13,8 +13,7 @@ jobs:
   submit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Current Repository
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
       - name: Checkout Bucket Upstream
         uses: actions/checkout@v7
         with:
@@ -47,6 +46,7 @@ jobs:
           repository: "${{ env.bucket_repo }}"
           token: ${{ secrets.PAT }}
           tag_name: "builtin"
+          body: "${{ steps.builder.outputs.pr_body }}"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:

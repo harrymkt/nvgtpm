@@ -21,7 +21,7 @@ from src import bucket, module, cmd, github_action, program
 
 def main():
 	parser = argparse.ArgumentParser(allow_abbrev=False, description=f"NVGTPM version {app.version}: A Package Manager for NVGT Modules")
-	subparsers = parser.add_subparsers(dest="command", title="Available commands:", metavar="<cmd>")
+	subparsers = parser.add_subparsers(dest="command", title="Available Commands", metavar="<cmd>")
 	program.cmd.register(subparsers)
 	bucket.cmd.register(subparsers)
 	

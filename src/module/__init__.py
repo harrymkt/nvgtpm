@@ -5,7 +5,7 @@ from src import paths, bucket, version
 from . import handle
 from .search import *
 
-class module:
+class Module:
 	def __init__(self, data=None):
 		self.name = None
 		self.version = None
@@ -92,7 +92,7 @@ def load_manifest_from(path, module_name):
 	try:
 		with open(path, "r") as f:
 			data = json.load(f)
-			mod = module()
+			mod = Module()
 			temp_manifest = data
 			temp_manifest["name"] = module_name
 			mod.load(temp_manifest)
@@ -153,8 +153,8 @@ def _check_module_update(mod, buckets, force=False):
 	latest_manifest = current_bucket.load_manifest(mod)
 	if not latest_manifest:
 		return None
-	vc = version.version(manifest.version or "0.0.0")
-	vl = version.version(latest_manifest.version or "0.0.0")
+	vc = version.Version(manifest.version or "0.0.0")
+	vl = version.Version(latest_manifest.version or "0.0.0")
 	if vl > vc or force:
 		return {"current": vc.version, "latest": vl.version, "bucket": current_bucket.name}
 	return None
@@ -174,8 +174,8 @@ def status(args):
 		if not b: continue
 		linfo = b.load_manifest(x)
 		if not linfo: continue
-		vc = version.version(manifest.version or "0.0.0")
-		vl = version.version(linfo.version or "0.0.0")
+		vc = version.Version(manifest.version or "0.0.0")
+		vl = version.Version(linfo.version or "0.0.0")
 		if vl == vc or vl < vc: continue
 		c += 1
 		prints.append(f"New version {vl.version} of {x} from {b.name} bucket")
@@ -204,7 +204,7 @@ def decl(args):
 	return 0
 
 def create_module(args):
-	mod = module()
+	mod = Module()
 	mod.name = input("Module name")
 	if not mod.name:
 		print("Error: a module must have a name.")

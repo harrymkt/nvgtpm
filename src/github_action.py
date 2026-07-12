@@ -1,7 +1,7 @@
 import json
 import os
-from src import github, paths
 from string import Template
+from src import github, paths
 
 def create(args):
 	name = input("Module name that is used to construct <module>.json")
