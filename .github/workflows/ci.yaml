@@ -12,10 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Set up NVGT
-        uses: harrymkt/setup-nvgt@v1.0.6
-      - name: Install NVGTPM
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/harrymkt/nvgtpm/main/install/dev.sh | bash
+        uses: harrymkt/setup-nvgt@v1.0.8
+        with:
+          tools: nvgtpm
       - name: Post Tests
         run: |
           nvgtpm program about

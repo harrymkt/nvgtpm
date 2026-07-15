@@ -8,7 +8,7 @@ import zipfile
 import json
 import uuid
 
-eof_sep = f"EOF_{uuid.uuid4()}"
+EOF_SEP = f"EOF_{uuid.uuid4()}"
 
 def zip(start_dir, zip_path, include_root=False):
 	start_dir = os.path.abspath(start_dir)
@@ -28,7 +28,7 @@ def set_output(key, value):
 		return
 	with open(o, "a") as f:
 		if "\n" in value:
-			f.write(f"{key}<<{eof_sep}\n{value}\n{eof_sep}\n")
+			f.write(f"{key}<<{EOF_SEP}\n{value}\n{EOF_SEP}\n")
 		else:
 			f.write(f"{key}={value}")
 
