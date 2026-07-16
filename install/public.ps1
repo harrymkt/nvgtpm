@@ -1,9 +1,12 @@
+# NVGTPM installer
+# This is the public version.
+
 $ErrorActionPreference = "Stop"
 
 # Locate NVGT binary via PATH
 $nvgtCmd = Get-Command nvgt -ErrorAction SilentlyContinue
 if (-not $nvgtCmd) {
-  throw "nvgt not found in PATH"
+  throw "NVGT not found in PATH"
 }
 
 # Get directory of nvgt.exe

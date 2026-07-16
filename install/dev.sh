@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
+# NVGTPM installer
+# This is the bleeding edge development version.
+
 NVGT_BIN="$(command -v nvgt || true)"
 
 if [ -z "$NVGT_BIN" ]; then
-  echo "Error: nvgt not found in PATH"
+  echo "Error: NVGT not found in PATH"
   exit 1
 fi
 
@@ -31,5 +34,4 @@ curl -fL "$URL" -o "$OUT"
 
 chmod +x "$OUT" 2>/dev/null || true
 sudo mv "$OUT" "$NVGT_DIR/"
-chmod +x "$NVGT_DIR/include"
 echo "NVGTPM development version installed to $NVGT_DIR"

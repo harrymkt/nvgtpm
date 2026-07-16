@@ -1,4 +1,4 @@
-# NVGTPM
+# NVGTPM (NonVisual Gaming Toolkit Package Manager)
 A command-line package manager for [NVGT](https://nvgt.dev) modules, known as include scripts. NVGTPM lets you install, update, and manage reusable NVGT modules from remote GitHub buckets or local directories without manually copying files.
 
 NVGTPM tracks installed modules, resolves dependencies from bucket manifests, and syncs updates directly into NVGT's `include/` directory.
@@ -62,7 +62,7 @@ nvgtpm bucket known
 Creating a module is relatively easy. Create a git repository, or anywhere you can host your module zip file, then contribute your `<module>.json` to one of the buckets, such as main.
 
 ### Zip and upload your module to your host
-Each module zip must contain an entry point named `main.nvgt` or `<module>.nvgt` so it can be used with `#include "<name>/<f>.nvgt"`. If you use a different entry point name, document it in the module. However, using different name other than `main.nvgt` and `<module>.nvgt` is generally not recommended.
+Each module zip must contain an entry point named `main.nvgt` or `<module>.nvgt` so it can be used with `#include "<name>/<f>.nvgt"`. If you use a different entry point name, document it in the module. However, using different name other than `main.nvgt` and `<module>.nvgt` is generally not recommended as it breaks the use of `nvgtpm decl` command.
 
 A module can contain multiple scripts and subdirectories.
 
