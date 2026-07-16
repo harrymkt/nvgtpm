@@ -14,7 +14,7 @@ jobs:
       - name: Set up NVGT
         uses: harrymkt/setup-nvgt@v1.0.8
         with:
-          tools: nvgtpm
+          tools: nvgtpm@dev
       - name: Post Tests
         run: |
           nvgtpm program about
