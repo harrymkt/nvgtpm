@@ -9,7 +9,7 @@ def main():
 	program.cmd.register(subparsers)
 	bucket.cmd.register(subparsers)
 	
-	install = subparsers.add_parser("install", help="Install script modules", description="Install script modules, includes")
+	install = subparsers.add_parser("install", help="Install script modules", description="Install script modules, include scripts")
 	install.add_argument("modules", nargs="*", help="Space-separated list of module names to install")
 	install.add_argument("-r", "--requirement", help="Install modules from a file")
 	install.set_defaults(func=lambda args: module.handle.install(args.modules, args.requirement))
