@@ -36,11 +36,13 @@ def main():
 	update.set_defaults(func=module.handle.update_command)
 	
 	subparsers.add_parser("create", help="Create module manifests", description="Create module manifests").set_defaults(func=module.create_module)
+	
 	ga = subparsers.add_parser("create-ga", help="Create GitHub action for automated submition", description="Create a GitHub action to automate pull-request and update your module manifest")
 	ga.add_argument("-o", "--output", help="Path to output, defaults to submit.yaml")
 	ga.set_defaults(func=github_action.create)
 	
 	cmd.cache.register(subparsers)
+	
 	subparsers.add_parser("status", help="Check module updates", description="Check status of module updates").set_defaults(func=module.status)
 	
 	home = subparsers.add_parser("home", help="Open the home page of a module", description="Open the home page of a module (if available)")

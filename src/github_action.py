@@ -36,7 +36,7 @@ def create(args):
 		print(f"Failed to create content GitHub action for {name} module.")
 		return 1
 	outpath = os.path.realpath(os.path.join(os.getcwd(), args.output or "submit.yaml"))
-	with open(outpath, "w") as f:
+	with open(outpath, "w", encoding="utf-8") as f:
 		f.write(content)
 		print(f"Created {os.path.basename(outpath) or outpath} in \"{outpath}\" for {name} module.")
 	return 0

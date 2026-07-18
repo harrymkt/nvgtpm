@@ -34,17 +34,7 @@ class Bucket:
 		from src import module
 		p = self.make_path(module_name)
 		if not os.path.exists(p): return None
-		try:
-			with open(p, "r") as f:
-				data = json.load(f)
-				mdl = module.Module()
-				temp_manifest = data
-				temp_manifest["name"] = module_name
-				mdl.load(temp_manifest)
-				return mdl
-		except:
-			pass
-		return None
+		return module.load_manifest_from(p, module_name)
 	
 	def load(self, data):
 		if data:
@@ -66,7 +56,7 @@ def load():
 	paths.init_environment()
 	buckets = []
 	try:
-		with open(paths.BUCKETS_TRACKING_FILE, "r") as f:
+		with open(paths.BUCKETS_TRACKING_FILE, "r", encoding="utf-8") as f:
 			data = json.load(f)
 			for name, source in data.items():
 				b = Bucket()
@@ -82,7 +72,7 @@ def load():
 	return buckets
 
 def save(buckets):
-	with open(paths.BUCKETS_TRACKING_FILE, "w") as f:
+	with open(paths.BUCKETS_TRACKING_FILE, "w", encoding="utf-8") as f:
 		json.dump({b.name: b.source for b in buckets}, f, indent=2)
 
 def find_index(buckets, name):

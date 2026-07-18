@@ -13,7 +13,7 @@ def install(module_names, requirement_file, force_update=False, force=False):
 	if module_names:
 		targets.extend(module_names)
 	if requirement_file and os.path.exists(requirement_file):
-		with open(requirement_file, "r") as f:
+		with open(requirement_file, "r", encoding="utf-8") as f:
 			targets.extend([
 				line.strip()
 				for line in f
@@ -104,7 +104,7 @@ def install(module_names, requirement_file, force_update=False, force=False):
 			info_path = os.path.join(target_path, "info.json")
 			manifest_path = b.make_path(mod_name)
 			try:
-				with open(manifest_path, "r") as f:
+				with open(manifest_path, "r", encoding="utf-8") as f:
 					manifest_data = json.load(f)
 				manifest_data["bucket"] = bucket_name
 				with open(info_path, "w", encoding="utf-8") as f:

@@ -90,7 +90,7 @@ def list_installed_modules(bucket_name=None):
 def load_manifest_from(path, module_name):
 	if not os.path.exists(path): return None
 	try:
-		with open(path, "r") as f:
+		with open(path, "r", encoding="utf-8") as f:
 			data = json.load(f)
 			mod = Module()
 			temp_manifest = data

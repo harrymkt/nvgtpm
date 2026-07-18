@@ -34,11 +34,11 @@ def init_environment():
 	import json
 	cbuckets = {}
 	try:
-		with open(BUCKETS_TRACKING_FILE, "r") as f:
+		with open(BUCKETS_TRACKING_FILE, "r", encoding="utf-8") as f:
 			cbuckets = json.load(f)
 	except:
 		pass
 	
 	if not os.path.exists(BUCKETS_TRACKING_FILE) or not cbuckets or len(cbuckets) == 0:
-		with open(BUCKETS_TRACKING_FILE, "w") as f:
+		with open(BUCKETS_TRACKING_FILE, "w", encoding="utf-8") as f:
 			json.dump(DEFAULT_BUCKETS, f, indent=2)

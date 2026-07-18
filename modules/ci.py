@@ -39,7 +39,7 @@ def main():
 		zip(x, f"{x}.zip")
 		print(f"{x}.zip created")
 		d = None
-		with open(f"{x}.json", "r") as f:
+		with open(f"{x}.json", "r", encoding="utf-8") as f:
 			d = json.load(f)
 		if not d:
 			print(f"Warning: JSON file for {x} module could not be loaded.")
