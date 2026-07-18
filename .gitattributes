@@ -2,9 +2,9 @@
 * text=auto eol=lf
 *.py linguist-vender=false linguist-generated=false
 *.nvgt linguist-language=AngelScript linguist-vender=false linguist-generated=false
-requirements.txt
+requirements.txt linguist-detectable
 *.sh
 *.bat
-*.md linguist-vender=false linguist-generated=false
-.git* linguist-generated=false linguist-documentation=false linguist-vender=false
-*.yaml linguist-generated=false linguist-documentation=false linguist-vender=false
+*.md linguist-vender=false linguist-generated=false linguist-detectable
+.git* linguist-generated=false linguist-documentation=false linguist-vender=false linguist-detectable
+*.yaml linguist-generated=false linguist-documentation=false linguist-vender=false linguist-detectable
