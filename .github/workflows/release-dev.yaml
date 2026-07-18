@@ -7,6 +7,10 @@ on:
       - "!install/**.py"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build on ${{ matrix.os }}
@@ -77,14 +81,13 @@ jobs:
           chmod +x ./release/nvgtpm-macos
           chmod +x ./release/nvgtpm-linux
       - name: Publish Release
-        uses: softprops/action-gh-release@v3
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          title: Latest Bleeding Edge Development Version
+          automatic_release_tag: dev
           files: |
             release/nvgtpm.exe
             release/nvgtpm-macos
             release/nvgtpm-linux
-          draft: false
-          prerelease: true
-          body_path: "unreleased-changes.md"
-          tag_name: "dev"
-          commitish: ${{ github.sha }}
