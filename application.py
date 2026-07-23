@@ -1,3 +1,3 @@
-BUILD = "2026.07.18"
+BUILD = "2026.07.23"
 VERSION = "0.0.5"
-DEV = True
+DEV = False
