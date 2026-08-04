@@ -29,7 +29,6 @@ namespace nvgtpm {
 			json_object j;
 			if (version != "") j.set("version", version);
 			if (url != "") j.set("url", url);
-			if (entry != "") j.set("entry", entry);
 			if (bucket != "") j.set("bucket", bucket);
 			if (description != "") j.set("description", description);
 			if (homepage != "") j.set("homepage", homepage);
@@ -45,7 +44,6 @@ namespace nvgtpm {
 			name = data.get("name", name);
 			version = data.get("version", version);
 			url = data.get("url", url);
-			entry = data.get("entry", entry);
 			bucket = data.get("bucket", bucket);
 			description = data.get("description", description);
 			homepage = data.get("homepage", homepage);

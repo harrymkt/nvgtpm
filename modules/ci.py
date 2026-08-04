@@ -33,7 +33,7 @@ def set_output(key, value):
 			f.write(f"{key}={value}")
 
 def main():
-	print("Processing CI...")
+	print("Processing continuous integration / deployment...")
 	pr = "### Module Manifests\nThe following modules are available\n\n"
 	for x in folders:
 		zip(x, f"{x}.zip")
@@ -45,7 +45,7 @@ def main():
 			print(f"Warning: JSON file for {x} module could not be loaded.")
 			continue
 		cm = f"#### {d.get("name", x) or x}\n"
-		if "description" in d: cm += f"{d["description"]}\n"
+		if "description" in d: cm += f"{d["description"]}\n\n"
 		cm += f"- Version: {d.get("version", "unknown")}\n- Download URL: {d["url"]}\n"
 		if "homepage" in d: cm += f"- Home page URL: {d["homepage"]}"
 		pr += f"{cm.strip()}\n\n"

@@ -91,6 +91,7 @@ That's it!
 You can use GitHub action to automate updating your module when it changes. A file called `<module>.json` must be added in your repository. The file is just a copy of the manifest that you have created earlier.
 
 Requirements:
+
 - The module must be on a GitHub repository.
 - You need a [GitHub personal token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with repos scope.
 - The personal token must be set in your [repository's secrets](https://docs.github.com/en/codespaces/managing-codespaces-for-your-organization/managing-development-environment-secrets-for-your-repository-or-organization#adding-secrets-for-a-repository), with the named `PAT`.
@@ -108,5 +109,6 @@ Asuming that the command is successful, you now have `submit.yaml` file. Copy th
 Commit and push the changes to the repository.
 
 Now, whenever you update the `<module>.json` file in your repository, the action will do the following:
+
 - It will create a fork of the target bucket repository on your account if it does not exist. Note: The forked repository will be named `<user>/<bucket_repo_name>`, meaning the name extracted from the bucket repository `owner/repo` format you give to the earlier interactive prompt. If you need a different name, edit the submit.yaml file.
 - It will then create a pull-request to the bucket repository.

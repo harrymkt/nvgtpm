@@ -1,6 +1,3 @@
-/*
-NVGTPM's official module to interact with NVGTPM modules.
-
 MIT License
 
 Copyright (c) 2026 [Harry Min Khant](https://harrymkt.github.io)
@@ -22,9 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/
-#include "module.nvgt"
-#include "paths.nvgt"
-namespace nvgtpm {
-	bool can_use = !SCRIPT_COMPILED;
-}
