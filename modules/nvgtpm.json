@@ -1,5 +1,5 @@
 {
-  "version": "2026.08.04",
+  "version": "2026.08.23",
   "url": "https://github.com/harrymkt/nvgtpm_bucket_main/releases/download/builtin/nvgtpm.zip",
   "description": "The official NVGTPM module to interact with installed NVGT modules, i.e. for verification purposes",
   "homepage": "https://github.com/harrymkt/nvgtpm"

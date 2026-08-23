@@ -49,7 +49,7 @@ namespace nvgtpm {
 			homepage = data.get("homepage", homepage);
 			depends.resize(0);
 			json_array@ arr = cast<json_array>(data.get("depends", null));
-			if (arr !is null) {
+			if (@arr != null) {
 				for (uint i = 0; i < arr.length(); i++) {
 					depends.insert_last(arr[i]);
 				}

@@ -36,6 +36,20 @@ jobs:
           mkdir -p "$TARGET_DIR"
           # Copy the file
           cp "modules/${{ env.app_name }}.json" "$TARGET_DIR/${{ env.app_name }}.json"
+      - name: Delete Existing Release and Tag of Modules
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          cd bucket
+          TAG_NAME="builtin"
+          
+          # Delete existing release (if it exists)
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Deleting existing release: $TAG_NAME"
+            gh release delete "$TAG_NAME" --yes --cleanup-tag
+          else
+            echo "No existing release found for tag: $TAG_NAME"
+          fi
       - name: Publish Automated Modules Release
         uses: softprops/action-gh-release@v3
         with:
@@ -47,12 +61,20 @@ jobs:
           token: ${{ secrets.PAT }}
           tag_name: "builtin"
           body: "${{ steps.builder.outputs.pr_body }}"
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v8
-        with:
-          token: ${{ secrets.PAT }}
-          path: bucket
-          commit-message: "Update Package Manifest of ${{ env.app_name }}"
-          title: "Update Package JSON Manifest of ${{ env.app_name }}"
-          branch: "app/${{ env.app_name }}"
-          body: "${{ steps.builder.outputs.pr_body }}"
+      - name: Commit and Push
+        run: |
+          cd bucket
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          git add .
+          
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "Update ${{ env.app_name }}" \
+              -m "${{ steps.builder.outputs.pr_body }}"
+            
+            git push
+          else
+            echo "No changes detected to commit."
+          fi
