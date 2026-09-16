@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Set up NVGT
-        uses: harrymkt/setup-nvgt@v1.0.8
+        uses: harrymkt/setup-nvgt@v1.0.9
         with:
           tools: nvgtpm@dev
       - name: Post Tests
